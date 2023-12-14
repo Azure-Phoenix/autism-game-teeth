@@ -16,7 +16,7 @@ export default class Hidden {
 
     setModel() {
         this.model = this.resource.scene;
-        this.model.visible = false;
+        // this.model.visible = false;
         this.model.traverse((child) => {
             if(child.isMesh){
                 child.material.transparent = true;
