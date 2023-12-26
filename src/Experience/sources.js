@@ -4,6 +4,7 @@ export default [
         type: 'texture',
         path: 'images/swipe/cursor.png'
     },
+
     {
         name: 'hidden',
         type: 'gltfModel',
@@ -54,9 +55,51 @@ export default [
         type: 'gltfModel',
         path: 'models/bathroom.glb'
     },
+
+
     {
-        name: 'instruct',
+        name: 'audio_one',
         type: 'audio',
-        path: 'audio/instruct.mp3'
-    }
+        path: 'audio/One.mp3'
+    },
+    {
+        name: 'audio_two',
+        type: 'audio',
+        path: 'audio/Two.mp3'
+    },
+    {
+        name: 'audio_three',
+        type: 'audio',
+        path: 'audio/Three.mp3'
+    },
+    {
+        name: 'audio_brush',
+        type: 'audio',
+        path: 'audio/Brush.mp3'
+    },
+    {
+        name: 'audio_close',
+        type: 'audio',
+        path: 'audio/Close.mp3'
+    },
+    {
+        name: 'audio_open',
+        type: 'audio',
+        path: 'audio/Open.mp3'
+    },
+    {
+        name: 'audio_pick',
+        type: 'audio',
+        path: 'audio/Pick.mp3'
+    },
+    {
+        name: 'audio_put',
+        type: 'audio',
+        path: 'audio/Put.mp3'
+    },
+    {
+        name: 'audio_openMouth',
+        type: 'audio',
+        path: 'audio/OpenMouth.mp3'
+    },
 ]

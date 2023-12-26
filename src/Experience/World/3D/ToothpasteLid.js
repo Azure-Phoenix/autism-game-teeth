@@ -17,6 +17,9 @@ export default class ToothpasteLid {
 
     setModel() {
         this.model = this.resource.scene;
+        // for (let i = 0; i < this.resource.animations.length; i++) {
+        //     console.log(this.resource.animations[i].name);
+        // }
         this.scene.add(this.model);
     }
 
@@ -30,8 +33,10 @@ export default class ToothpasteLid {
         this.animation.actions = {};
 
         this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "L_0_Idle"));
-        this.animation.actions.pickToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "L_1_PickToothpaste"));
-        this.animation.actions.openToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "L_2_OpenToothpaste"));
+        this.animation.actions.pickToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "L_1_PickToothpaste_"));
+        this.animation.actions.openToothpaste1 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "L_2-1_OpenToothpaste"));
+        this.animation.actions.openToothpaste2 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "L_2-2_OpenToothpaste"));
+        this.animation.actions.openToothpaste3 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "L_2-3_OpenToothpaste"));
 
         for (let anim in this.animation.actions) {
             if (anim != "idle") {

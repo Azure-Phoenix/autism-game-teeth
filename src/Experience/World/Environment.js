@@ -13,6 +13,15 @@ export default class Environment {
         this.pmremGenerator = new THREE.PMREMGenerator(this.renderer.instance);
         this.roomEnvironment = new RoomEnvironment();
 
+        this.axesHelper  = new THREE.AxesHelper(10, 10, 10);
+        this.axesHelper.traverse((child) => {
+            if(child.material) {
+                // child.material.depthTest = false;
+                // child.material.depthWrite = false;
+            }
+        });
+        // this.scene.add(this.axesHelper);
+
         // this.setSunLight();
         // this.setModelViweLight();
         this.setEnvironment();

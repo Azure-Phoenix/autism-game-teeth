@@ -8,7 +8,6 @@ import Resources from './Utils/Resources.js';
 import Camera from './Camera.js';
 import Renderer from './Renderer.js';
 import Loading from './Loading.js';
-// import Raycaster from './Raycaster.js';
 import sources from './sources.js'
 
 import Sequence from './Sequence.js';
@@ -40,7 +39,6 @@ export default class Experience {
         this.camera = new Camera();
         this.renderer = new Renderer();
         this.loading = new Loading();
-        // this.raycaster = new Raycaster();
         this.world = new World();
         this.sequence = new Sequence();
 
@@ -69,6 +67,8 @@ export default class Experience {
     destroy() {
         this.sizes.off('resize');
         this.time.off('tick');
+        this.resources.off('loaded');
+        this.resources.off('ready');
 
         // Traverse the whole scene
         this.scene.traverse((child) => {

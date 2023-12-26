@@ -40,7 +40,9 @@ export default class Toothpaste {
 
         this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_0_Idle"));
         this.animation.actions.pickToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_1_PickToothpaste"));
-        this.animation.actions.openToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_2_OpenToothpaste"));
+        this.animation.actions.openToothpaste1 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_2-1_OpenToothpaste"));
+        this.animation.actions.openToothpaste2 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_2-2_OpenToothpaste"));
+        this.animation.actions.openToothpaste3 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_2-3_OpenToothpaste"));
         this.animation.actions.pickToothbrush = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_4_Picktoothbrush"));
         this.animation.actions.squeezeToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_5_SqueezeToothpaste"));
         this.animation.actions.squeezeToothpasteSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "Key_P_5_SqueezeToothpaste"));

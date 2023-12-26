@@ -28,21 +28,22 @@ export default class Character {
 
         // Mixer
         this.animation.mixer = new THREE.AnimationMixer(this.model);
+        this.animation.tempMixer = new THREE.AnimationMixer(this.model);
 
         // Actions
         this.animation.actions = {};
 
         this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_0_Idle"));
         this.animation.actions.pickToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_1_PickToothpaste"));
-        this.animation.actions.openToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_2_OpenToothpaste"));
+        this.animation.actions.openToothpaste1 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_2-1_OpenToothpaste"));
+        this.animation.actions.openToothpaste2 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_2-2_OpenToothpaste"));
+        this.animation.actions.openToothpaste3 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_2-3_OpenToothpaste"));
         this.animation.actions.pickToothbrush = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_4_Picktoothbrush"));
         this.animation.actions.squeezeToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_5_SqueezeToothpaste"));
         this.animation.actions.openMouth = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_7_BrushStart"));
         this.animation.actions.openMouthSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_7_OpenMouth_SK"));
         this.animation.actions.brushingUR = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_8_BrushUpperRight"));
-        this.animation.actions.brushingURSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_8_BrushUpperRight_SK"));
         this.animation.actions.brushingUL = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_9_BrushUpperLeft"));
-        this.animation.actions.brushingULSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_9_BrushUpperLeft_SK"));
         this.animation.actions.spitFirst = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_10_spitFirst"));
         this.animation.actions.spitSecond = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_13_spitSecond"));
         this.animation.actions.spitThird = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_15_spitThird"));
@@ -50,11 +51,8 @@ export default class Character {
         this.animation.actions.spitSecondSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_13_spitSecond_SK"));
         this.animation.actions.spitThirdSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_15_spitThird_SK"));
         this.animation.actions.brushingLR = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_11_BrushLowerRight"));
-        this.animation.actions.brushingLRSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_11_BrushLowerRight_SK"));
         this.animation.actions.brushingLL = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_12_BrushLowerLeft"));
-        this.animation.actions.brushingLLSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_12_BrushLowerLeft_SK"));
         this.animation.actions.brushingF = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_14_BrushFront"));
-        this.animation.actions.brushingFSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_14_BrushFront_SK"));
         this.animation.actions.openTap = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_16_OpenTap"));
         this.animation.actions.washBrush = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_17_WashBrush"));
         this.animation.actions.putBrush = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_18_PutBrush"));
@@ -64,7 +62,7 @@ export default class Character {
         this.animation.actions.cleanMouthSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_21_FillMouthGargle_SK"));
         this.animation.actions.final = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_22_Final"));
         this.animation.actions.finalSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_22_Final_SK"));
-
+        
         for (let anim in this.animation.actions) {
             if (anim != "idle") {
                 // console.log(anim);
@@ -73,6 +71,13 @@ export default class Character {
             }
         }
 
+        this.animation.actions.brushingURSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_8_BrushUpperRight_SK"));
+        this.animation.actions.brushingULSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_9_BrushUpperLeft_SK"));
+        this.animation.actions.brushingLRSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_11_BrushLowerRight_SK"));
+        this.animation.actions.brushingLLSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_12_BrushLowerLeft_SK"));
+        this.animation.actions.brushingFSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_14_BrushFront_SK"));
+
+        
         this.animation.actions.current = this.animation.actions.idle;
         this.animation.actions.current.play();
 
@@ -92,15 +97,15 @@ export default class Character {
             } else if (name === "spitThird") {
                 this.animation.playSK('spitThirdSK');
             } else if (name === "brushingUR") {
-                this.animation.playSK('brushingURSK');
+                // this.animation.playSK('brushingURSK');
             } else if (name === "brushingUL") {
-                this.animation.playSK('brushingULSK');
+                // this.animation.playSK('brushingULSK');
             } else if (name === "brushingLR") {
-                this.animation.playSK('brushingLRSK');
+                // this.animation.playSK('brushingLRSK');
             } else if (name === "brushingLL") {
-                this.animation.playSK('brushingLLSK');
+                // this.animation.playSK('brushingLLSK');
             } else if (name === "brushingF") {
-                this.animation.playSK('brushingFSK');
+                // this.animation.playSK('brushingFSK');
             } else if (name === "cleanMouth") {
                 this.animation.playSK('cleanMouthSK');
             } else if (name === "final") {
