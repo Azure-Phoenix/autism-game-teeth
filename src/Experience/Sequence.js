@@ -83,7 +83,6 @@ export default class Sequence {
             }
 
             if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
-                console.log("alkdhlaksjhflaskjfhdsaijfhaslfhjds");
                 window.addEventListener('mousemove', this.brush);
                 if (this.step == 8)
                     this.experience.world.character.animation.actions.brushingURSK.play();
@@ -128,6 +127,24 @@ export default class Sequence {
             if (intersects.length > 0) {
                 this.startObject = intersects[0].object;
             }
+
+            if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
+                window.addEventListener('touchmove', this.brush);
+                if (this.step == 8)
+                    this.experience.world.character.animation.actions.brushingURSK.play();
+                if (this.step == 9) {
+                    this.experience.world.character.animation.actions.brushingULSK.play();
+                }
+                if (this.step == 11) {
+                    this.experience.world.character.animation.actions.brushingLRSK.play();
+                }
+                if (this.step == 12) {
+                    this.experience.world.character.animation.actions.brushingLLSK.play();
+                }
+                if (this.step == 14) {
+                    this.experience.world.character.animation.actions.brushingFSK.play();
+                }
+            }
         });
         window.addEventListener('touchend', (event) => {
             this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
@@ -141,6 +158,8 @@ export default class Sequence {
                 this.endObject = intersects[0].object;
                 this.trigger_action(this.step);
             }
+
+            window.removeEventListener('touchmove', this.brush);
         });
 
         this.sequence();
@@ -451,6 +470,11 @@ export default class Sequence {
     brush = (event) => {
         console.log("dragging");
         let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+
+        if (isNaN(mouseX)) {
+            mouseX = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+        }
+
         let delta;
         if (this.step == 8 || this.step == 11) {
             delta = (mouseX - this.mouse.x) * 5;
@@ -593,9 +617,9 @@ export default class Sequence {
     }
 
     refreshGame() {
-        if(this.gameFailure == 3){
+        if (this.gameFailure == 3) {
             alert("Game Over!");
-        } else if(this.gameSuccess == 4) {
+        } else if (this.gameSuccess == 4) {
             alert("Congratulation! Move to next!");
         }
 
