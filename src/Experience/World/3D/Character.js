@@ -17,9 +17,9 @@ export default class Character {
 
     setModel() {
         this.model = this.resource.scene;
-        // for (let i = 0; i < this.resource.animations.length; i++) {
-        //     console.log(this.resource.animations[i].name);
-        // }
+        for (let i = 0; i < this.resource.animations.length; i++) {
+            console.log(this.resource.animations[i].name);
+        }
         this.scene.add(this.model);
     }
 
@@ -33,6 +33,7 @@ export default class Character {
         // Actions
         this.animation.actions = {};
 
+        this.animation.actions.blink = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_Blink"));
         this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_0_Idle"));
         this.animation.actions.idleSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_0_Idle_SK"));
         this.animation.actions.pickToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_1_PickToothpaste"));
@@ -65,7 +66,7 @@ export default class Character {
         this.animation.actions.finalSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_22_Final_SK"));
         
         for (let anim in this.animation.actions) {
-            if (anim != "idle") {
+            if (anim != "idle" && anim != "blink") {
                 // console.log(anim);
                 this.animation.actions[anim].setLoop(THREE.LoopOnce);
                 this.animation.actions[anim].clampWhenFinished = true;
@@ -81,6 +82,8 @@ export default class Character {
         
         this.animation.actions.current = this.animation.actions.idle;
         this.animation.actions.current.play();
+
+        this.animation.actions.blink.play();
 
         this.animation.actions.currentSK = this.animation.actions.openMouth;
 

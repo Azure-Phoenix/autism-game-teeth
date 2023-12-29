@@ -186,13 +186,17 @@ export default class Sequence {
                     }
                     console.log(this.step);
                     this.camera_move(this.step);
-                    setTimeout(() => {
-                        if (this.autoAction.includes(this.step)) {
-                            this.play_action(this.step);
-                        } else {
-                            this.prompt_action(this.step);
-                        }
-                    }, 2000);
+                    if (this.step == 20)
+                        this.play_action(this.step);
+                    else {
+                        setTimeout(() => {
+                            if (this.autoAction.includes(this.step)) {
+                                this.play_action(this.step);
+                            } else {
+                                this.prompt_action(this.step);
+                            }
+                        }, 2000);
+                    }
                     if (this.timeoutLimit == 3) {
                         //finish game
                         // alert("Time Out");

@@ -56,7 +56,7 @@ export default class WaterCup {
             newAction.reset()
             newAction.play()
             if (newAction != oldAction)
-                newAction.crossFadeFrom(oldAction, 0.5);
+                newAction.crossFadeFrom(oldAction, 0);
 
             this.animation.actions.current = newAction;
         }
