@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import Experience from '../../Experience.js'
 
-export default class ToothpasteContent {
+export default class WaterInCup {
     constructor() {
         this.experience = new Experience()
         this.scene = this.experience.scene
@@ -9,17 +9,17 @@ export default class ToothpasteContent {
         this.time = this.experience.time
 
         // Resource
-        this.resource = this.resources.items.toothpasteContent;
+        this.resource = this.resources.items.waterInCup;
 
-        this.setModel()
-        this.setAnimation()
+        this.setModel();
+        this.setAnimation();
     }
 
     setModel() {
         this.model = this.resource.scene;
-        for (let i = 0; i < this.resource.animations.length; i++) {
-            console.log(this.resource.animations[i].name);
-        }
+        // for (let i = 0; i < this.resource.animations.length; i++) {
+        //     console.log(this.resource.animations[i].name);
+        // }
         this.scene.add(this.model);
     }
 
@@ -32,10 +32,10 @@ export default class ToothpasteContent {
         // Actions
         this.animation.actions = {}
 
-        this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "PC_0_Idle"));
-        this.animation.actions.squeezeToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "PC_5_SqueezeToothpaste"));
-        this.animation.actions.squeezeToothpasteSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "PC_5_SqueezeToothpaste_SK"));
-        this.animation.actions.openMouth = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "PC_7_BrushStart"));
+        this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "WC_0_Idle"));
+        this.animation.actions.pickCup = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "WC_19_PickUpCup"));
+        this.animation.actions.closeTap = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "WC_20_CloseTap"));
+        this.animation.actions.cleanMouth = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "WC_21_FillMouthGargle"));
 
         for (let anim in this.animation.actions) {
             if (anim != "idle") {
@@ -52,14 +52,10 @@ export default class ToothpasteContent {
             const newAction = this.animation.actions[name];
             const oldAction = this.animation.actions.current;
 
-            if (newAction == this.animation.actions.squeezeToothpaste) {
-                this.animation.actions.squeezeToothpasteSK.play();
-            }
-
             newAction.reset()
             newAction.play()
             if (newAction != oldAction)
-                newAction.crossFadeFrom(oldAction, 0.5);
+                newAction.crossFadeFrom(oldAction, 0);
 
             this.animation.actions.current = newAction;
         }

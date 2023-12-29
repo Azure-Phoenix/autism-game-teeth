@@ -106,7 +106,7 @@ export default class Toothbrush {
             const newAction = this.animation.actions[name];
             const oldAction = this.animation.actions.current;
 
-            // newAction.reset();
+            newAction.reset();
             newAction.play();
             if (newAction != oldAction);
             newAction.crossFadeFrom(oldAction, 0);

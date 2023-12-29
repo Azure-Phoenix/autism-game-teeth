@@ -26,7 +26,7 @@ export default class Sequence {
         this.brushingAction = [8, 9, 11, 12, 14];
         this.autoAction = [7, 10, 13, 15, 16, 17, 19, 20, 21, 22];
         this.canControlBrushing = false;
-        this.availableAction = false;
+        this.availableAction = true;
         this.brushForward = true;
 
         this.gameFailure = 0;
@@ -276,6 +276,9 @@ export default class Sequence {
             }
             this.timeoutLimit++;
         } else {
+            this.availableAction = true;
+            this.canControlBrushing = true;
+
             this.experience.world.cursor.setPosition(this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`]);
             this.experience.world.cursor.show();
             this.experience.world.cursor.mesh.lookAt(this.camera.instance.position);
@@ -296,7 +299,7 @@ export default class Sequence {
                     ...this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_to`],
                     onComplete: () => {
                         this.experience.world.cursor.hide();
-                        this.availableAction = true;
+                        // this.availableAction = true;
                     },
                 });
             } else {
@@ -310,8 +313,8 @@ export default class Sequence {
                     ...this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_to`],
                     onComplete: () => {
                         this.experience.world.cursor.hide();
-                        this.availableAction = true;
-                        this.canControlBrushing = true;
+                        // this.availableAction = true;
+                        // this.canControlBrushing = true;
                     },
                 });
             }
@@ -327,7 +330,9 @@ export default class Sequence {
     trigger_action(id) {
         if (this.startObject.name === `Hidden_Action_${id}_from` && this.endObject.name === `Hidden_Action_${id}_to` && !this.brushingAction.includes(id)) {
             if (this.availableAction || this.autoAction.includes(id)) {
+                this.canControlBrushing = false;
                 this.availableAction = false;
+                this.experience.world.cursor.hide();
                 this.confetti();
                 this.play_action(id);
             }
@@ -337,7 +342,6 @@ export default class Sequence {
     play_action(id) {
         this.prompotLimit = 0;
         this.step++;
-        console.log("track", this.step);
 
         switch (id) {
             case 1: // Action 1: Pick Toothpaste
@@ -447,17 +451,20 @@ export default class Sequence {
                 this.experience.world.character.animation.play('pickCup');
                 this.experience.world.waterCup.animation.play('pickCup');
                 this.experience.world.waterFlow.animation.play('pickCup');
+                this.experience.world.waterInCup.animation.play('pickCup');
                 break;
             case 20: // Action 20: Closing Tap
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_close);
                 this.experience.world.character.animation.play('closeTap');
                 this.experience.world.waterCup.animation.play('closeTap');
                 this.experience.world.waterFlow.animation.play('closeTap');
+                this.experience.world.waterInCup.animation.play('closeTap');
                 break;
             case 21: // Action 21: Cleaning Mouth
                 this.experience.world.character.animation.play('cleanMouth');
                 this.experience.world.waterCup.animation.play('cleanMouth');
                 this.experience.world.sputum.animation.play('cleanMouth');
+                this.experience.world.waterInCup.animation.play('cleanMouth');
                 break;
             case 22: // Action 22: Final Animation
                 this.experience.world.character.animation.play('final');
@@ -477,9 +484,9 @@ export default class Sequence {
 
         let delta;
         if (this.step == 8 || this.step == 11) {
-            delta = (mouseX - this.mouse.x) * 5;
+            delta = (mouseX - this.mouse.x) * 4;
         } else if (this.step == 9 || this.step == 12 || this.step == 14) {
-            delta = - (mouseX - this.mouse.x) * 5;
+            delta = - (mouseX - this.mouse.x) * 4;
         }
         // console.log(this.experience.world.toothbrush.model.children[0].position);
         // console.log(this.experience.world.toothbrush.model.children[0].rotation);
@@ -531,11 +538,12 @@ export default class Sequence {
             this.brushingCount++;
             this.brushForward = true;
             if (this.brushingCount == 3) {
+                window.removeEventListener('mousemove', this.brush);
                 this.experience.world.cursor.hide();
                 this.brushingCount = 0;
+                this.availableAction = false;
                 this.canControlBrushing = false;
                 this.experience.world.character.animation.tempMixer.stopAllAction();
-                window.removeEventListener('mousemove', this.brush);
                 this.confetti();
                 this.play_action(this.step);
             }

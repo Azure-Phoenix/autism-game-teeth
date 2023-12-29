@@ -12,6 +12,7 @@ import WaterFlow from './3D/WaterFlow';
 import ToothpasteContent from './3D/ToothpasteContent.js';
 import Cursor from './2D/SwipeCursor.js';
 import Instruct from './Audio/Instruct.js';
+import WaterInCup from './3D/WaterInCup';
 
 export default class World {
     constructor() {
@@ -31,6 +32,7 @@ export default class World {
             this.sputum = new Sputum();
             this.waterCup = new WaterCup();
             this.waterFlow = new WaterFlow();
+            this.waterInCup = new WaterInCup();
             this.bathroom = new Bathroom();
             this.cursor = new Cursor();
             this.instruct = new Instruct();
@@ -55,5 +57,7 @@ export default class World {
             this.waterCup.update();
         if (this.waterFlow)
             this.waterFlow.update();
+        if (this.waterInCup)
+            this.waterInCup.update();
     }
 }

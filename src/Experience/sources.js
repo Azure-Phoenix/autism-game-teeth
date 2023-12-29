@@ -51,6 +51,11 @@ export default [
         path: 'models/waterFlow.glb'
     },
     {
+        name: 'waterInCup',
+        type: 'gltfModel',
+        path: 'models/waterInCup.glb'
+    },
+    {
         name: 'bathroom',
         type: 'gltfModel',
         path: 'models/bathroom.glb'
