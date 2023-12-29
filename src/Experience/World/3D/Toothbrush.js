@@ -115,6 +115,10 @@ export default class Toothbrush {
         }
     }
 
+    refresh() {
+        this.animation.play("idle");
+    }
+
     update() {
         this.animation.mixer.update(this.time.delta);
     }

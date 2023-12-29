@@ -23,9 +23,9 @@ export default class Toothpaste {
                 child.material.side = THREE.DoubleSide;
             }
         });
-        // for (let i = 0; i < this.resource.animations.length; i++) {
-        //     console.log(this.resource.animations[i].name);
-        // }
+        for (let i = 0; i < this.resource.animations.length; i++) {
+            console.log(this.resource.animations[i].name);
+        }
         this.scene.add(this.model);
     }
 
@@ -39,6 +39,7 @@ export default class Toothpaste {
         this.animation.actions = {}
 
         this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_0_Idle"));
+        // this.animation.actions.idle = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_0_Idle"));
         this.animation.actions.pickToothpaste = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_1_PickToothpaste"));
         this.animation.actions.openToothpaste1 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_2-1_OpenToothpaste"));
         this.animation.actions.openToothpaste2 = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "P_2-2_OpenToothpaste"));
@@ -73,6 +74,11 @@ export default class Toothpaste {
 
             this.animation.actions.current = newAction;
         }
+    }
+
+    refresh() {
+        this.animation.play("idle");
+        this.animation.actions.squeezeToothpasteSK.stop();
     }
 
     update() {

@@ -640,14 +640,14 @@ export default class Sequence {
         this.availableAction = false;
         this.brushForward = true;
 
-        this.experience.world.character.animation.play('idle');
-        this.experience.world.toothbrush.animation.play('idle');
-        this.experience.world.toothpaste.animation.play('idle');
-        this.experience.world.toothpasteContent.animation.play('idle');
-        this.experience.world.toothpasteLid.animation.play('idle');
-        this.experience.world.waterCup.animation.play('idle');
-        this.experience.world.waterFlow.animation.play('idle');
-        this.experience.world.sputum.animation.play('idle');
+        this.experience.world.character.refresh();
+        this.experience.world.toothbrush.refresh();
+        this.experience.world.toothpaste.refresh();
+        this.experience.world.toothpasteContent.refresh();
+        this.experience.world.toothpasteLid.refresh();
+        this.experience.world.waterCup.refresh();
+        this.experience.world.waterFlow.refresh();
+        this.experience.world.sputum.refresh();
 
         this.camera_move(1);
         // this.experience.camera.instance.position.set(...this.experience.camera.camera_data[0].data.position);
