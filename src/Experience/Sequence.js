@@ -2,19 +2,18 @@ import gsap from 'gsap';
 import * as THREE from 'three';
 import Experience from "./Experience";
 
-import party from "party-js";
 import JSConfetti from 'js-confetti'
 
 export default class Sequence {
 
     constructor() {
+
         this.experience = new Experience();
         this.scene = this.experience.scene;
         this.loading = this.experience.loading;
         this.camera = this.experience.camera;
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
-
 
         this.step = 1;
         this.prompotLimit = 0;
@@ -25,23 +24,27 @@ export default class Sequence {
         this.brushingCount = 0;
         this.brushingAction = [8, 9, 11, 12, 14];
         this.autoAction = [7, 10, 13, 15, 16, 17, 19, 20, 21, 22];
+        this.draggingAction = [1, 4, 18]
         this.canControlBrushing = false;
         this.availableAction = true;
         this.brushForward = true;
+        this.isDragging = false;
+        this.isReversing = false;
 
         this.gameFailure = 0;
         this.gameSuccess = 0;
 
         this.jsConfetti = new JSConfetti();
 
+        this.posFrom = new THREE.Vector3();
+        this.posTo = new THREE.Vector3();
+        this.maxX = 0;
+        this.maxY = 0;
+        this.minX = 0;
+        this.minY = 0;
+        this.dragProgress = {};
 
-        // this.startRotation = new THREE.Euler(0, 2 * Math.PI, -Math.PI / 2);
-        // this.endRotation = new THREE.Euler(0, 5, -1.55);
-
-        // // Assuming these are your start and end positions
-        // this.startPoint = new THREE.Vector3(-0.4515087306499481, 1.3392058610916138, 0.08033858239650726);
-        // this.endPoint = new THREE.Vector3(-0.5015, 1.3392058610916138, -0.03);
-
+        // Brush positions and rotations
         this.startRotation = [];
         this.startRotation[8] = new THREE.Euler(0, 2 * Math.PI, -Math.PI / 2);
         this.startRotation[9] = new THREE.Euler(Math.PI, 0, -Math.PI / 2);
@@ -54,15 +57,12 @@ export default class Sequence {
         this.endRotation[11] = new THREE.Euler(0, 5, -1.55);
         this.endRotation[12] = new THREE.Euler(Math.PI, -1.23, -Math.PI / 2);
         this.endRotation[14] = new THREE.Euler(Math.PI, 0, -Math.PI / 2);
-
-        // Assuming these are your start and end positions
         this.startPoint = []
         this.startPoint[8] = new THREE.Vector3(-0.4515087306499481, 1.3392058610916138, 0.08033858239650726);
         this.startPoint[9] = new THREE.Vector3(-0.44859135150909424, 1.3386489152908325, -0.1079862043261528);
         this.startPoint[11] = new THREE.Vector3(-0.4515087306499481, 1.3392058610916138, 0.08033858239650726);
         this.startPoint[12] = new THREE.Vector3(-0.44859135150909424, 1.3386489152908325, -0.1079862043261528);
         this.startPoint[14] = new THREE.Vector3(-0.444, 1.3386489152908325, -0.1279862043261528);
-
         this.endPoint = [];
         this.endPoint[8] = new THREE.Vector3(-0.5015, 1.3392058610916138, -0.03);
         this.endPoint[9] = new THREE.Vector3(-0.5015, 1.3392058610916138, -0.002);
@@ -80,6 +80,7 @@ export default class Sequence {
 
             if (intersects.length > 0) {
                 this.startObject = intersects[0].object;
+                this.trigger_dragging(this.step);
             }
 
             if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
@@ -112,7 +113,14 @@ export default class Sequence {
                 this.endObject = intersects[0].object;
                 this.trigger_action(this.step);
             }
+
+            if (this.isDragging) {
+                this.isReversing = true;
+                this.isDragging = false;
+            }
+
             window.removeEventListener('mousemove', this.brush);
+            window.removeEventListener('mousemove', this.dragging);
         });
 
 
@@ -126,12 +134,14 @@ export default class Sequence {
 
             if (intersects.length > 0) {
                 this.startObject = intersects[0].object;
+                this.trigger_dragging(this.step);
             }
 
             if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
                 window.addEventListener('touchmove', this.brush);
-                if (this.step == 8)
+                if (this.step == 8) {
                     this.experience.world.character.animation.actions.brushingURSK.play();
+                }
                 if (this.step == 9) {
                     this.experience.world.character.animation.actions.brushingULSK.play();
                 }
@@ -160,6 +170,7 @@ export default class Sequence {
             }
 
             window.removeEventListener('touchmove', this.brush);
+            window.removeEventListener('touchmove', this.dragging);
         });
 
         this.sequence();
@@ -173,6 +184,13 @@ export default class Sequence {
             }, 1000);
 
             this.experience.world.character.animation.mixer.addEventListener("finished", (e) => {
+                if (this.isReversing) {
+                    this.isReversing = false;
+                    console.log("finish reserving");
+                    this.experience.world.toothbrush.animation.actions.current.paused = true;
+                    this.experience.world.toothpaste.animation.actions.current.paused = true;
+                    this.experience.world.toothpasteLid.animation.actions.current.paused = true;
+                }
                 if (!e.action._clip.name.includes("_SK")) {
                     if (this.step == 23) {
                         this.confetti();
@@ -198,7 +216,7 @@ export default class Sequence {
                         }, 2000);
                     }
                     if (this.timeoutLimit == 3) {
-                        //finish game
+                        // Finish game
                         // alert("Time Out");
                         this.gameFailure++;
                         this.refreshGame();
@@ -229,12 +247,10 @@ export default class Sequence {
                 let currentPosition = { x: width / 2, y: window.innerHeight / 2 }
 
                 function doMouseActions() {
-
                     const elem = document.elementFromPoint(currentPosition.x, currentPosition.y);
 
                     // Mouse Down at center
                     fireMouseEvent('mousedown', elem, currentPosition.x, currentPosition.y);
-
 
                     const actions = [
                         { direction: 'right', percent: 20 },
@@ -331,8 +347,91 @@ export default class Sequence {
         }
     }
 
+    draggingReady(id) {
+        this.posFrom = this.experience.world.hidden.hiddenObj[`Hidden_Action_${id}_from`].position.clone();
+        this.posTo = this.experience.world.hidden.hiddenObj[`Hidden_Action_${id}_to`].position.clone();
+
+        this.posFrom.project(this.camera.instance);
+        this.posTo.project(this.camera.instance);
+
+        let halfWidth = window.innerWidth / 2;
+        let halfHeight = window.innerHeight / 2;
+
+        this.posFrom.x = (this.posFrom.x * halfWidth) + halfWidth;
+        this.posFrom.y = -(this.posFrom.y * halfHeight) + halfHeight;
+
+        this.posTo.x = (this.posTo.x * halfWidth) + halfWidth;
+        this.posTo.y = -(this.posTo.y * halfHeight) + halfHeight;
+
+        this.maxX = Math.max(this.posFrom.x, this.posTo.x);
+        this.minX = Math.min(this.posFrom.x, this.posTo.x);
+        this.maxY = Math.max(this.posFrom.y, this.posTo.y);
+        this.minY = Math.min(this.posFrom.y, this.posTo.y);
+    }
+
+    dragging = (event) => {
+        let mousePos = new THREE.Vector2();
+
+        // For PC
+        mousePos.x = event.clientX
+        mousePos.y = event.clientY
+
+        // For Mobile
+        if (isNaN(mousePos.x)) {
+            mousePos.x = event.changedTouches[0].clientX
+            mousePos.y = event.changedTouches[0].clientY
+        }
+
+        if (mousePos.x >= this.minX && mousePos.x <= this.maxX && mousePos.y >= this.minY && mousePos.y <= this.maxY) {
+            this.dragProgress.x = Math.abs((mousePos.x - this.posFrom.x) / (this.posFrom.x - this.posTo.x));
+            this.dragProgress.y = Math.abs((mousePos.y - this.posFrom.y) / (this.posFrom.y - this.posTo.y));
+            this.dragProgress.percent = Math.min(this.dragProgress.x, this.dragProgress.y);
+        }
+
+        // console.log(this.id);
+
+        if (this.step == 1) {
+            this.experience.world.character.animation.actions.pickToothpaste.time = this.experience.world.character.animation.actions.pickToothpaste.getClip().duration / 2 * this.dragProgress.percent;
+            this.experience.world.toothpaste.animation.actions.pickToothpaste.time = this.experience.world.toothpaste.animation.actions.pickToothpaste.getClip().duration / 2 * this.dragProgress.percent;
+            this.experience.world.toothpasteLid.animation.actions.pickToothpaste.time = this.experience.world.toothpasteLid.animation.actions.pickToothpaste.getClip().duration / 2 * this.dragProgress.percent;
+        } else if (this.step == 4) {
+            this.experience.world.character.animation.actions.pickToothbrush.time = this.experience.world.character.animation.actions.pickToothbrush.getClip().duration / 2 * this.dragProgress.percent;
+            this.experience.world.toothpaste.animation.actions.pickToothbrush.time = this.experience.world.toothpaste.animation.actions.pickToothbrush.getClip().duration / 2 * this.dragProgress.percent;
+            this.experience.world.toothbrush.animation.actions.pickToothbrush.time = this.experience.world.toothbrush.animation.actions.pickToothbrush.getClip().duration / 2 * this.dragProgress.percent;
+        } else if (this.step == 18) {
+            this.experience.world.character.animation.actions.putBrush.time = this.experience.world.character.animation.actions.putBrush.getClip().duration / 2 * this.dragProgress.percent;
+            this.experience.world.toothbrush.animation.actions.putBrush.time = this.experience.world.toothbrush.animation.actions.putBrush.getClip().duration / 2 * this.dragProgress.percent;
+        }
+
+        if (((mousePos.x >= this.posTo.x - window.innerWidth / 13) && (mousePos.x <= this.posTo.x)) && ((mousePos.y >= this.posTo.y) && (mousePos.y <= this.posTo.y + window.innerWidth / 13))) {
+            console.log("arrived at target");
+            this.isDragging = false;
+            this.step++;
+            this.confetti();
+            this.availableAction = false;
+            window.removeEventListener('mousemove', this.dragging);
+        }
+    }
+
+    trigger_dragging(id) {
+        if (this.draggingAction.includes(id)) {
+            if (this.startObject.name === `Hidden_Action_${id}_from`) {
+                if (!this.isReversing && this.availableAction) {
+                    this.isDragging = true;
+                    this.play_action(id);
+                    this.step--;
+                    this.draggingReady(id);
+                    this.dragProgress.percent = 0;
+                    // this.experience.world.character.animation.actions.pickToothpaste.reset();
+                    window.addEventListener('mousemove', this.dragging);
+                    window.addEventListener('touchmove', this.dragging);
+                }
+            }
+        }
+    }
+
     trigger_action(id) {
-        if (this.startObject.name === `Hidden_Action_${id}_from` && this.endObject.name === `Hidden_Action_${id}_to` && !this.brushingAction.includes(id)) {
+        if (this.startObject.name === `Hidden_Action_${id}_from` && this.endObject.name === `Hidden_Action_${id}_to` && !this.brushingAction.includes(id) && !this.draggingAction.includes(id)) {
             if (this.availableAction || this.autoAction.includes(id)) {
                 this.canControlBrushing = false;
                 this.availableAction = false;
@@ -547,7 +646,7 @@ export default class Sequence {
                 this.brushingCount = 0;
                 this.availableAction = false;
                 this.canControlBrushing = false;
-                this.experience.world.character.animation.tempMixer.stopAllAction();
+                this.experience.world.character.animation.brushingMixer.stopAllAction();
                 this.confetti();
                 this.play_action(this.step);
             }
@@ -573,7 +672,7 @@ export default class Sequence {
             }
         }
 
-        this.experience.world.character.animation.tempMixer.setTime(this.experience.world.character.animation.actions.brushingURSK.getClip().duration * (brushPercentage / 2));
+        this.experience.world.character.animation.brushingMixer.setTime(this.experience.world.character.animation.actions.brushingURSK.getClip().duration * (brushPercentage / 2));
     }
 
     camera_move(id) {
@@ -631,7 +730,7 @@ export default class Sequence {
     refreshGame() {
         if (this.gameFailure == 3) {
             alert("Game Over!");
-        } else if (this.gameSuccess == 4) {
+        } else if (this.gameSuccess == 2) {
             alert("Congratulation! Move to next!");
         }
 

@@ -23,9 +23,9 @@ export default class Toothpaste {
                 child.material.side = THREE.DoubleSide;
             }
         });
-        for (let i = 0; i < this.resource.animations.length; i++) {
-            console.log(this.resource.animations[i].name);
-        }
+        // for (let i = 0; i < this.resource.animations.length; i++) {
+        //     console.log(this.resource.animations[i].name);
+        // }
         this.scene.add(this.model);
     }
 
@@ -67,11 +67,20 @@ export default class Toothpaste {
                 this.animation.actions.squeezeToothpasteSK.play();
             }
 
-            newAction.reset()
-            newAction.play()
-            if (newAction != oldAction)
-                newAction.crossFadeFrom(oldAction, 0);
+            if (name === "pickToothpaste" || name === "pickToothbrush" || name === "putBrush") {
+                newAction.reset();
+                console.log("reseted");
+                if (newAction != oldAction) {
+                    newAction.play();
+                    oldAction.stop();
+                }
+            } else {
+                newAction.reset();
+                newAction.play();
 
+                if (newAction != oldAction)
+                    newAction.crossFadeFrom(oldAction, 0);
+            }
             this.animation.actions.current = newAction;
         }
     }
@@ -82,6 +91,14 @@ export default class Toothpaste {
     }
 
     update() {
-        this.animation.mixer.update(this.time.delta);
+        if (this.experience.sequence.isReversing) {
+            this.animation.mixer.update(-this.time.delta);
+        } else {
+            if (this.experience.sequence.isDragging) {
+                this.animation.mixer.update(0);
+            } else {
+                this.animation.mixer.update(this.time.delta);
+            }
+        }
     }
 }

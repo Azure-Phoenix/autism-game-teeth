@@ -8,6 +8,9 @@ export default class Character {
         this.resources = this.experience.resources;
         this.time = this.experience.time;
 
+        this.isDragging = false;
+        this.isReversing = false;
+
         // Resource
         this.resource = this.resources.items.character;
 
@@ -17,9 +20,9 @@ export default class Character {
 
     setModel() {
         this.model = this.resource.scene;
-        for (let i = 0; i < this.resource.animations.length; i++) {
-            console.log(this.resource.animations[i].name);
-        }
+        // for (let i = 0; i < this.resource.animations.length; i++) {
+        //     console.log(this.resource.animations[i].name);
+        // }
         this.scene.add(this.model);
     }
 
@@ -28,7 +31,8 @@ export default class Character {
 
         // Mixer
         this.animation.mixer = new THREE.AnimationMixer(this.model);
-        this.animation.tempMixer = new THREE.AnimationMixer(this.model);
+        this.animation.brushingMixer = new THREE.AnimationMixer(this.model);
+
 
         // Actions
         this.animation.actions = {};
@@ -64,7 +68,7 @@ export default class Character {
         this.animation.actions.cleanMouthSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_21_FillMouthGargle_SK"));
         this.animation.actions.final = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_22_Final"));
         this.animation.actions.finalSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_22_Final_SK"));
-        
+
         for (let anim in this.animation.actions) {
             if (anim != "idle" && anim != "blink") {
                 // console.log(anim);
@@ -73,13 +77,13 @@ export default class Character {
             }
         }
 
-        this.animation.actions.brushingURSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_8_BrushUpperRight_SK"));
-        this.animation.actions.brushingULSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_9_BrushUpperLeft_SK"));
-        this.animation.actions.brushingLRSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_11_BrushLowerRight_SK"));
-        this.animation.actions.brushingLLSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_12_BrushLowerLeft_SK"));
-        this.animation.actions.brushingFSK = this.animation.tempMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_14_BrushFront_SK"));
+        this.animation.actions.brushingURSK = this.animation.brushingMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_8_BrushUpperRight_SK"));
+        this.animation.actions.brushingULSK = this.animation.brushingMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_9_BrushUpperLeft_SK"));
+        this.animation.actions.brushingLRSK = this.animation.brushingMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_11_BrushLowerRight_SK"));
+        this.animation.actions.brushingLLSK = this.animation.brushingMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_12_BrushLowerLeft_SK"));
+        this.animation.actions.brushingFSK = this.animation.brushingMixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "C_14_BrushFront_SK"));
 
-        
+
         this.animation.actions.current = this.animation.actions.idle;
         this.animation.actions.current.play();
 
@@ -102,26 +106,33 @@ export default class Character {
                 this.animation.playSK('spitThirdSK');
             } else if (name === "idle") {
                 this.animation.playSK('idleSK');
-            // } else if (name === "brushingUL") {
-            //     // this.animation.playSK('brushingULSK');
-            // } else if (name === "brushingLR") {
-            //     // this.animation.playSK('brushingLRSK');
-            // } else if (name === "brushingLL") {
-            //     // this.animation.playSK('brushingLLSK');
-            // } else if (name === "brushingF") {
-            //     // this.animation.playSK('brushingFSK');
+                // } else if (name === "brushingUL") {
+                //     // this.animation.playSK('brushingULSK');
+                // } else if (name === "brushingLR") {
+                //     // this.animation.playSK('brushingLRSK');
+                // } else if (name === "brushingLL") {
+                //     // this.animation.playSK('brushingLLSK');
+                // } else if (name === "brushingF") {
+                //     // this.animation.playSK('brushingFSK');
             } else if (name === "cleanMouth") {
                 this.animation.playSK('cleanMouthSK');
             } else if (name === "final") {
                 this.animation.playSK('finalSK');
             }
 
-            newAction.reset();
-            newAction.play();
+            if (name === "pickToothpaste" || name === "pickToothbrush" || name === "putBrush") {
+                newAction.reset();
+                if (newAction != oldAction) {
+                    newAction.play();
+                    oldAction.stop();
+                }
+            } else {
+                newAction.reset();
+                newAction.play();
 
-            if (newAction != oldAction)
-                newAction.crossFadeFrom(oldAction, 0.2);
-
+                if (newAction != oldAction)
+                    newAction.crossFadeFrom(oldAction, 0.2);
+            }
             this.animation.actions.current = newAction;
         }
 
@@ -144,6 +155,14 @@ export default class Character {
     }
 
     update() {
-        this.animation.mixer.update(this.time.delta);
+        if (this.experience.sequence.isReversing) {
+            this.animation.mixer.update(-this.time.delta);
+        } else {
+            if (this.experience.sequence.isDragging) {
+                this.animation.mixer.update(0);
+            } else {
+                this.animation.mixer.update(this.time.delta);
+            }
+        }
     }
 }

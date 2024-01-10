@@ -17,9 +17,9 @@ export default class WaterFlow {
 
     setModel() {
         this.model = this.resource.scene;
-        // for (let i = 0; i < this.resource.animations.length; i++) {
-        //     console.log(this.resource.animations[i].name);
-        // }
+        for (let i = 0; i < this.resource.animations.length; i++) {
+            console.log(this.resource.animations[i].name);
+        }
         this.scene.add(this.model);
     }
 
@@ -36,13 +36,16 @@ export default class WaterFlow {
         this.animation.actions.openTap = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "WF_16_OpenTap"));
         this.animation.actions.pickCup = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "WF_19_PickUpCup"));
         this.animation.actions.closeTap = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "WF_20_CloseTap"));
+        this.animation.actions.waterSK = this.animation.mixer.clipAction(THREE.AnimationClip.findByName(this.resource.animations, "Key.002Action"));
 
         for (let anim in this.animation.actions) {
-            if (anim != "idle") {
+            if (anim != "idle" && anim != "waterSK") {
                 this.animation.actions[anim].setLoop(THREE.LoopOnce);
                 this.animation.actions[anim].clampWhenFinished = true;
             }
         }
+
+        this.animation.actions.waterSK.play();
 
         this.animation.actions.current = this.animation.actions.idle;
         this.animation.actions.current.play();

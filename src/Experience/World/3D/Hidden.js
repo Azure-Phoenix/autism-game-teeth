@@ -7,6 +7,7 @@ export default class Hidden {
         this.scene = this.experience.scene;
         this.resources = this.experience.resources;
         this.hiddenPos = {};
+        this.hiddenObj = {};
 
         // Resource
         this.resource = this.resources.items.hidden;
@@ -22,6 +23,7 @@ export default class Hidden {
                 child.material.transparent = true;
                 child.material.opacity = 0.5;
             }
+            this.hiddenObj[child.name] = child;
             this.hiddenPos[child.name] = child.position;
         })
         this.scene.add(this.model);

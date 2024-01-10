@@ -106,11 +106,20 @@ export default class Toothbrush {
             const newAction = this.animation.actions[name];
             const oldAction = this.animation.actions.current;
 
-            newAction.reset();
-            newAction.play();
-            if (newAction != oldAction);
-            newAction.crossFadeFrom(oldAction, 0);
+            if (name === "pickToothpaste" || name === "pickToothbrush" || name === "putBrush") {
+                newAction.reset();
+                console.log("reseted");
+                if (newAction != oldAction) {
+                    newAction.play();
+                    oldAction.stop();
+                }
+            } else {
+                newAction.reset();
+                newAction.play();
 
+                if (newAction != oldAction)
+                    newAction.crossFadeFrom(oldAction, 0);
+            }
             this.animation.actions.current = newAction;
         }
     }
@@ -120,6 +129,14 @@ export default class Toothbrush {
     }
 
     update() {
-        this.animation.mixer.update(this.time.delta);
+        if (this.experience.sequence.isReversing) {
+            this.animation.mixer.update(-this.time.delta);
+        } else {
+            if (this.experience.sequence.isDragging) {
+                this.animation.mixer.update(0);
+            } else {
+                this.animation.mixer.update(this.time.delta);
+            }
+        }
     }
 }
