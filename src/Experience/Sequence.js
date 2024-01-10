@@ -102,6 +102,7 @@ export default class Sequence {
             }
         });
         window.addEventListener('mouseup', (event) => {
+            console.log( this.step);
             this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
@@ -167,6 +168,11 @@ export default class Sequence {
             if (intersects.length > 0) {
                 this.endObject = intersects[0].object;
                 this.trigger_action(this.step);
+            }
+
+            if (this.isDragging) {
+                this.isReversing = true;
+                this.isDragging = false;
             }
 
             window.removeEventListener('touchmove', this.brush);
@@ -410,6 +416,7 @@ export default class Sequence {
             this.confetti();
             this.availableAction = false;
             window.removeEventListener('mousemove', this.dragging);
+            window.removeEventListener('touchmove', this.dragging);
         }
     }
 
