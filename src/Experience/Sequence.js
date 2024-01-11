@@ -102,7 +102,7 @@ export default class Sequence {
             }
         });
         window.addEventListener('mouseup', (event) => {
-            console.log( this.step);
+            console.log(this.step);
             this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
@@ -401,9 +401,9 @@ export default class Sequence {
             this.experience.world.toothpaste.animation.actions.pickToothpaste.time = this.experience.world.toothpaste.animation.actions.pickToothpaste.getClip().duration * (1 / 3) * Math.sqrt(this.dragProgress.percent);
             this.experience.world.toothpasteLid.animation.actions.pickToothpaste.time = this.experience.world.toothpasteLid.animation.actions.pickToothpaste.getClip().duration * (1 / 3) * Math.sqrt(this.dragProgress.percent);
         } else if (this.step == 4) {
-            this.experience.world.character.animation.actions.pickToothbrush.time = this.experience.world.character.animation.actions.pickToothbrush.getClip().duration * (2/5) * Math.sqrt(this.dragProgress.percent);
-            this.experience.world.toothpaste.animation.actions.pickToothbrush.time = this.experience.world.toothpaste.animation.actions.pickToothbrush.getClip().duration * (2/5) * Math.sqrt(this.dragProgress.percent);
-            this.experience.world.toothbrush.animation.actions.pickToothbrush.time = this.experience.world.toothbrush.animation.actions.pickToothbrush.getClip().duration * (2/5) * Math.sqrt(this.dragProgress.percent);
+            this.experience.world.character.animation.actions.pickToothbrush.time = this.experience.world.character.animation.actions.pickToothbrush.getClip().duration * (1 / 2) * Math.sqrt(this.dragProgress.percent);
+            this.experience.world.toothpaste.animation.actions.pickToothbrush.time = this.experience.world.toothpaste.animation.actions.pickToothbrush.getClip().duration * (1 / 2) * Math.sqrt(this.dragProgress.percent);
+            this.experience.world.toothbrush.animation.actions.pickToothbrush.time = this.experience.world.toothbrush.animation.actions.pickToothbrush.getClip().duration * (1 / 2) * Math.sqrt(this.dragProgress.percent);
         } else if (this.step == 18) {
             this.experience.world.character.animation.actions.putBrush.time = this.experience.world.character.animation.actions.putBrush.getClip().duration / 2 * this.dragProgress.percent;
             this.experience.world.toothbrush.animation.actions.putBrush.time = this.experience.world.toothbrush.animation.actions.putBrush.getClip().duration / 2 * this.dragProgress.percent;
