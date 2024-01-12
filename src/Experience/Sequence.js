@@ -16,7 +16,7 @@ export default class Sequence {
         this.mouse = new THREE.Vector2();
 
         this.step = 1;
-        this.prompotLimit = 0;
+        this.promptLimit = 0;
         this.timeoutLimit = 0;
         this.passActions = [3, 6];
         this.closeCamera = [7, 8, 9, 11, 12, 14]; //
@@ -232,8 +232,8 @@ export default class Sequence {
     }
 
     prompt_action(id) {
-        this.prompotLimit++;
-        if (this.prompotLimit == 5) { // == 5
+        this.promptLimit++;
+        if (this.promptLimit == 5) { // == 5
             // do action automatically
             if (this.brushingAction.includes(id)) { // for atomatic brushing actions.
                 const width = window.innerWidth;
@@ -447,7 +447,7 @@ export default class Sequence {
     }
 
     play_action(id) {
-        this.prompotLimit = 0;
+        this.promptLimit = 0;
         this.step++;
 
         switch (id) {
@@ -499,7 +499,7 @@ export default class Sequence {
             case 7: // Action 7: Opening Mouth
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_openMouth);
                 this.experience.world.character.animation.play('openMouth');
-                this.experience.world.toothpasteContent.animation.play('openMouth');
+                // this.experience.world.toothpasteContent.animation.play('openMouth');
                 this.experience.world.toothbrush.animation.play('openMouth');
                 break;
             case 8: // Action 8: Brushing Upper Right
@@ -740,7 +740,7 @@ export default class Sequence {
         }
 
         this.step = 1;
-        this.prompotLimit = 0;
+        this.promptLimit = 0;
         this.timeoutLimit = 0;
         this.openingCount = 0;
         this.brushingCount = 0;
