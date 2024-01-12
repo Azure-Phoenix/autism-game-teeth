@@ -196,8 +196,7 @@ export default class Sequence {
                     this.experience.world.toothbrush.animation.actions.current.paused = true;
                     this.experience.world.toothpaste.animation.actions.current.paused = true;
                     this.experience.world.toothpasteLid.animation.actions.current.paused = true;
-                }
-                if (!e.action._clip.name.includes("_SK")) {
+                } else if (!e.action._clip.name.includes("_SK")) {
                     if (this.step == 23) {
                         this.confetti();
                         this.gameSuccess++;
@@ -393,8 +392,6 @@ export default class Sequence {
             this.dragProgress.y = Math.abs((mousePos.y - this.posFrom.y) / (this.posFrom.y - this.posTo.y));
             this.dragProgress.percent = Math.min(this.dragProgress.x, this.dragProgress.y);
         }
-
-        // console.log(this.id);
 
         if (this.step == 1) {
             this.experience.world.character.animation.actions.pickToothpaste.time = this.experience.world.character.animation.actions.pickToothpaste.getClip().duration * (1 / 3) * Math.sqrt(this.dragProgress.percent);
