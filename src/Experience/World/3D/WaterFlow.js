@@ -20,6 +20,9 @@ export default class WaterFlow {
         // for (let i = 0; i < this.resource.animations.length; i++) {
         //     console.log(this.resource.animations[i].name);
         // }
+        this.material = this.model.children[0].material;
+        this.material.map.wrapS = THREE.RepeatWrapping;
+        this.material.map.wrapT = THREE.RepeatWrapping;
         this.scene.add(this.model);
     }
 
@@ -69,6 +72,8 @@ export default class WaterFlow {
     }
 
     update() {
+        this.material.map.offset.x -= 0.01;
+        this.material.map.offset.y -= 0.01;
         this.animation.mixer.update(this.time.delta);
     }
 }
