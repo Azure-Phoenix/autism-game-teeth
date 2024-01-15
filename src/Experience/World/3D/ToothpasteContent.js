@@ -59,16 +59,17 @@ export default class ToothpasteContent {
 
             newAction.reset()
             newAction.play()
-            // if (newAction != oldAction)
-            //     newAction.crossFadeFrom(oldAction, 0);
+            if (newAction != oldAction)
+                newAction.crossFadeFrom(oldAction, 0);
 
-            oldAction.stop();
+            // oldAction.stop();
             this.animation.actions.current = newAction;
         }
     }
 
     refresh() {
         this.animation.play("idle");
+        this.model.visible = true;
         // this.animation.actions.squeezeToothpasteSK.stop();
     }
 

@@ -499,7 +499,7 @@ export default class Sequence {
             case 7: // Action 7: Opening Mouth
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_openMouth);
                 this.experience.world.character.animation.play('openMouth');
-                // this.experience.world.toothpasteContent.animation.play('openMouth');
+                this.experience.world.toothpasteContent.model.visible = false;
                 this.experience.world.toothbrush.animation.play('openMouth');
                 break;
             case 8: // Action 8: Brushing Upper Right
