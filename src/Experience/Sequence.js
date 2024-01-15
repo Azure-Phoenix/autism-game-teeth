@@ -643,6 +643,14 @@ export default class Sequence {
             this.brushForward = false;
         } else if (percentage == 0 && this.brushForward == false) {
             this.brushingCount++;
+            console.log(this.brushingCount);
+            if (this.brushingCount == 1) {
+                this.experience.world.instruct.playSound(this.experience.world.instruct.a_one);
+            } else if (this.brushingCount == 2) {
+                this.experience.world.instruct.playSound(this.experience.world.instruct.a_two);
+            } else if (this.brushingCount == 3) {
+                this.experience.world.instruct.playSound(this.experience.world.instruct.a_three);
+            }
             this.brushForward = true;
             if (this.brushingCount == 3) {
                 window.removeEventListener('mousemove', this.brush);
