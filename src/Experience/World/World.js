@@ -13,6 +13,7 @@ import ToothpasteContent from './3D/ToothpasteContent.js';
 import Cursor from './2D/SwipeCursor.js';
 import Instruct from './Audio/Instruct.js';
 import WaterInCup from './3D/WaterInCup';
+import Foam from './3D/Foam.js';
 
 export default class World {
     constructor() {
@@ -28,6 +29,7 @@ export default class World {
             this.toothpaste = new Toothpaste();
             this.toothpasteLid = new ToothpasteLid();
             this.toothpasteContent = new ToothpasteContent();
+            this.foam = new Foam();
             this.toothbrush = new Toothbrush();
             this.sputum = new Sputum();
             this.waterCup = new WaterCup();
@@ -49,6 +51,8 @@ export default class World {
             this.toothpasteLid.update();
         if (this.toothpasteContent)
             this.toothpasteContent.update();
+        if (this.foam)
+            this.foam.update();
         if (this.toothbrush)
             this.toothbrush.update();
         if (this.sputum)

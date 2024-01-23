@@ -31,6 +31,11 @@ export default [
         path: 'models/toothpasteContent.glb'
     },
     {
+        name: 'foam',
+        type: 'gltfModel',
+        path: 'models/foam.glb'
+    },
+    {
         name: 'toothbrush',
         type: 'gltfModel',
         path: 'models/toothbrush.glb'

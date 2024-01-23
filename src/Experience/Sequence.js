@@ -15,7 +15,7 @@ export default class Sequence {
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
 
-        this.step = 1;
+        this.step = 4;
         this.promptLimit = 0;
         this.timeoutLimit = 0;
         this.passActions = [3, 6];
@@ -30,6 +30,7 @@ export default class Sequence {
         this.brushForward = true;
         this.isDragging = false;
         this.isReversing = false;
+        this.foamChange = true;
 
         this.gameFailure = 0;
         this.gameSuccess = 0;
@@ -102,7 +103,7 @@ export default class Sequence {
             }
         });
         window.addEventListener('mouseup', (event) => {
-            console.log(this.step);
+            // console.log(this.step);
             this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
@@ -192,7 +193,7 @@ export default class Sequence {
             this.experience.world.character.animation.mixer.addEventListener("finished", (e) => {
                 if (this.isReversing) {
                     this.isReversing = false;
-                    console.log("finish reserving");
+                    // console.log("finish reserving");
                     this.experience.world.toothbrush.animation.actions.current.paused = true;
                     this.experience.world.toothpaste.animation.actions.current.paused = true;
                     this.experience.world.toothpasteLid.animation.actions.current.paused = true;
@@ -207,7 +208,7 @@ export default class Sequence {
                     if (this.passActions.includes(this.step)) {
                         this.step++;
                     }
-                    console.log(this.step);
+                    // console.log(this.step);
                     this.camera_move(this.step);
                     if (this.step == 20)
                         this.play_action(this.step);
@@ -328,7 +329,7 @@ export default class Sequence {
                     },
                 });
             } else {
-                console.log(id);
+                // console.log(id);
                 gsap.fromTo(this.experience.world.cursor.mesh.position, this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`], {
                     duration: 0.5,
                     delay: 1,
@@ -407,7 +408,7 @@ export default class Sequence {
         }
 
         if (((mousePos.x >= this.posTo.x - window.innerWidth / 13) && (mousePos.x <= this.posTo.x)) && ((mousePos.y >= this.posTo.y) && (mousePos.y <= this.posTo.y + window.innerWidth / 13))) {
-            console.log("arrived at target");
+            // console.log("arrived at target");
             this.isDragging = false;
             this.step++;
             this.confetti();
@@ -513,8 +514,11 @@ export default class Sequence {
             case 10: // Action 10: Spitting Sputum
                 this.experience.world.character.animation.play('spitFirst');
                 this.experience.world.sputum.animation.play('spitFirst');
+                this.experience.world.foam.spitFirst();
+                this.experience.world.foam.model.visible = false;
                 setTimeout(() => {
                     this.experience.world.toothbrush.animation.play('spitFirst');
+                    this.experience.world.foam.model.visible = true;
                 }, 2000);
                 break;
             case 11: // Action 11: Brushing Lower Right
@@ -528,8 +532,11 @@ export default class Sequence {
             case 13: // Action 13: Spitting Sputum
                 this.experience.world.character.animation.play('spitSecond');
                 this.experience.world.sputum.animation.play('spitFirst');
+                this.experience.world.foam.spitSecond();
+                this.experience.world.foam.model.visible = false;
                 setTimeout(() => {
                     this.experience.world.toothbrush.animation.play('spitSecond');
+                    this.experience.world.foam.model.visible = true;
                 }, 3000);
                 break;
             case 14: // Action 14: Brushing Front
@@ -539,6 +546,8 @@ export default class Sequence {
             case 15: // Action 15: Spitting Sputum
                 this.experience.world.character.animation.play('spitThird');
                 this.experience.world.sputum.animation.play('spitFirst');
+                this.experience.world.foam.spitThird();
+                this.experience.world.foam.model.visible = false;
                 break;
             case 16: // Action 16: Opening Tap
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_open);
@@ -582,7 +591,7 @@ export default class Sequence {
     }
 
     brush = (event) => {
-        console.log("dragging");
+        // console.log("dragging");
         let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
 
         if (isNaN(mouseX)) {
@@ -636,19 +645,84 @@ export default class Sequence {
             }
         }
 
+        if (this.brushingCount == 0 && this.foamChange == true) {
+            console.log("brushingURSK0");
+            // this.experience.world.foam.animation.foamMixer.stopAllAction();
+            if (this.step == 8) {
+                this.experience.world.foam.animation.actions.brushingURSK0.reset();
+                this.experience.world.foam.animation.actions.brushingURSK0.play();
+                this.experience.world.foam.animation.actions.idle8SK.stop();
+            } else if (this.step == 9) {
+                this.experience.world.foam.animation.actions.brushingULSK0.reset();
+                this.experience.world.foam.animation.actions.brushingULSK0.play();
+                this.experience.world.foam.animation.actions.idle9SK.stop();
+            } else if (this.step == 11) {
+                this.experience.world.foam.animation.actions.brushingLRSK0.reset();
+                this.experience.world.foam.animation.actions.brushingLRSK0.play();
+                this.experience.world.foam.animation.actions.idle11SK.stop();
+            } else if (this.step == 12) {
+                this.experience.world.foam.animation.actions.brushingLLSK0.reset();
+                this.experience.world.foam.animation.actions.brushingLLSK0.play();
+                this.experience.world.foam.animation.actions.idle12SK.stop();
+            } else if (this.step == 14) {
+                this.experience.world.foam.animation.actions.brushingFSK0.reset();
+                this.experience.world.foam.animation.actions.brushingFSK0.play();
+                this.experience.world.foam.animation.actions.idle14SK.stop();
+            }
+            this.foamChange = false;
+        }
+
         let percentage = (this.startPoint[this.step].z - this.experience.world.toothbrush.model.children[0].position.z) / (this.startPoint[this.step].z - this.endPoint[this.step].z);
-        let brushPercentage;
+        if (percentage < 0) {
+            percentage = 0;
+        } else if (percentage > 1) {
+            percentage = 1;
+        }
+
+        let brushPercentage, foamPercentage;
 
         if (percentage == 1 && this.brushForward == true) {
             this.brushForward = false;
         } else if (percentage == 0 && this.brushForward == false) {
             this.brushingCount++;
-            console.log(this.brushingCount);
+            console.log("test");
+            this.foamChange = true;
+            // console.log(this.brushingCount);
             if (this.brushingCount == 1) {
+                console.log("brushingURSK1");
+                // this.experience.world.foam.animation.foamMixer.stopAllAction();
+                if (this.step == 8) {
+                    console.log("????????????");
+                    this.experience.world.foam.animation.actions.brushingURSK1.play();
+                    this.experience.world.foam.animation.actions.brushingURSK0.stop();
+                } else if (this.step == 9) {
+                    this.experience.world.foam.animation.actions.brushingULSK1.play();
+                    this.experience.world.foam.animation.actions.brushingULSK0.stop();
+                } else if (this.step == 11) {
+                    this.experience.world.foam.animation.actions.brushingLRSK1.play();
+                    this.experience.world.foam.animation.actions.brushingLRSK0.stop();
+                } else if (this.step == 12) {
+                    this.experience.world.foam.animation.actions.brushingLLSK1.play();
+                    this.experience.world.foam.animation.actions.brushingLLSK0.stop();
+                } else if (this.step == 14) {
+                    this.experience.world.foam.animation.actions.brushingFSK1.play();
+                    this.experience.world.foam.animation.actions.brushingFSK0.stop();
+                }
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_one);
             } else if (this.brushingCount == 2) {
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_two);
             } else if (this.brushingCount == 3) {
+                if (this.step == 8) {
+                    this.experience.world.foam.animation.actions.brushingURSK1.paused = true;
+                } else if (this.step == 9) {
+                    this.experience.world.foam.animation.actions.brushingULSK1.paused = true;
+                } else if (this.step == 11) {
+                    this.experience.world.foam.animation.actions.brushingLRSK1.paused = true;
+                } else if (this.step == 12) {
+                    this.experience.world.foam.animation.actions.brushingLLSK1.paused = true;
+                } else if (this.step == 14) {
+                    this.experience.world.foam.animation.actions.brushingFSK1.paused = true;
+                }
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_three);
             }
             this.brushForward = true;
@@ -662,6 +736,12 @@ export default class Sequence {
                 this.confetti();
                 this.play_action(this.step);
             }
+        }
+
+        if (this.brushForward == true) {
+            foamPercentage = percentage * 0.5;
+        } else {
+            foamPercentage = 1 - percentage * 0.5;
         }
 
         if (this.step == 12) {
@@ -685,10 +765,15 @@ export default class Sequence {
         }
 
         this.experience.world.character.animation.brushingMixer.setTime(this.experience.world.character.animation.actions.brushingURSK.getClip().duration * (brushPercentage / 2));
+        if (this.step == 14) {
+            this.experience.world.foam.animation.foamMixer.setTime(this.experience.world.foam.animation.actions.brushingFSK1.getClip().duration * foamPercentage);
+        } else {
+            this.experience.world.foam.animation.foamMixer.setTime(this.experience.world.foam.animation.actions.brushingURSK0.getClip().duration * foamPercentage);
+        }
     }
 
     camera_move(id) {
-        console.log("camera", this.step);
+        // console.log("camera", this.step);
         if (this.closeCamera.includes(id)) {
             this.experience.camera.instance.fov = 30;
             this.experience.camera.instance.updateProjectionMatrix();
@@ -764,6 +849,7 @@ export default class Sequence {
         this.experience.world.waterCup.refresh();
         this.experience.world.waterFlow.refresh();
         this.experience.world.sputum.refresh();
+        this.experience.world.foam.refresh();
 
         this.camera_move(1);
         // this.experience.camera.instance.position.set(...this.experience.camera.camera_data[0].data.position);

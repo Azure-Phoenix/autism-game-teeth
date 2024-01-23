@@ -23,6 +23,7 @@ export default class Character {
         // for (let i = 0; i < this.resource.animations.length; i++) {
         //     console.log(this.resource.animations[i].name);
         // }
+        // this.model.visible = false;
         this.scene.add(this.model);
     }
 
