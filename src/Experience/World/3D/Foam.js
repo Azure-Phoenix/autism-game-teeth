@@ -17,9 +17,9 @@ export default class Foam {
 
     setModel() {
         this.model = this.resource.scene;
-        for (let i = 0; i < this.resource.animations.length; i++) {
-            console.log(this.resource.animations[i].name);
-        }
+        // for (let i = 0; i < this.resource.animations.length; i++) {
+        //     console.log(this.resource.animations[i].name);
+        // }
         this.scene.add(this.model);
     }
 

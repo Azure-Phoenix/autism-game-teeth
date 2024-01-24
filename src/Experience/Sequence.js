@@ -71,113 +71,115 @@ export default class Sequence {
         this.endPoint[12] = new THREE.Vector3(-0.5015, 1.332, -0.002);
         this.endPoint[14] = new THREE.Vector3(-0.444, 1.3386489152908325, -0.09);
 
-        window.addEventListener('mousedown', (event) => {
-            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-
-            this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-
-            const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-            if (intersects.length > 0) {
-                this.startObject = intersects[0].object;
-                this.trigger_dragging(this.step);
-            }
-
-            if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
-                window.addEventListener('mousemove', this.brush);
-                if (this.step == 8)
-                    this.experience.world.character.animation.actions.brushingURSK.play();
-                if (this.step == 9) {
-                    this.experience.world.character.animation.actions.brushingULSK.play();
+        this.loading.on('start', () => {
+            window.addEventListener('mousedown', (event) => {
+                this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    
+                this.raycaster.setFromCamera(this.mouse, this.camera.instance);
+    
+                const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    
+                if (intersects.length > 0) {
+                    this.startObject = intersects[0].object;
+                    this.trigger_dragging(this.step);
                 }
-                if (this.step == 11) {
-                    this.experience.world.character.animation.actions.brushingLRSK.play();
+    
+                if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
+                    window.addEventListener('mousemove', this.brush);
+                    if (this.step == 8)
+                        this.experience.world.character.animation.actions.brushingURSK.play();
+                    if (this.step == 9) {
+                        this.experience.world.character.animation.actions.brushingULSK.play();
+                    }
+                    if (this.step == 11) {
+                        this.experience.world.character.animation.actions.brushingLRSK.play();
+                    }
+                    if (this.step == 12) {
+                        this.experience.world.character.animation.actions.brushingLLSK.play();
+                    }
+                    if (this.step == 14) {
+                        this.experience.world.character.animation.actions.brushingFSK.play();
+                    }
                 }
-                if (this.step == 12) {
-                    this.experience.world.character.animation.actions.brushingLLSK.play();
+            });
+            window.addEventListener('mouseup', (event) => {
+                // console.log(this.step);
+                this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+    
+                this.raycaster.setFromCamera(this.mouse, this.camera.instance);
+    
+                const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    
+                if (intersects.length > 0) {
+                    this.endObject = intersects[0].object;
+                    this.trigger_action(this.step);
                 }
-                if (this.step == 14) {
-                    this.experience.world.character.animation.actions.brushingFSK.play();
+    
+                if (this.isDragging) {
+                    this.isReversing = true;
+                    this.isDragging = false;
                 }
-            }
-        });
-        window.addEventListener('mouseup', (event) => {
-            // console.log(this.step);
-            this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-
-            this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-
-            const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-            if (intersects.length > 0) {
-                this.endObject = intersects[0].object;
-                this.trigger_action(this.step);
-            }
-
-            if (this.isDragging) {
-                this.isReversing = true;
-                this.isDragging = false;
-            }
-
-            window.removeEventListener('mousemove', this.brush);
-            window.removeEventListener('mousemove', this.dragging);
-        });
-
-
-        window.addEventListener('touchstart', (event) => {
-            this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
-            this.mouse.y = - (event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
-
-            this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-
-            const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-            if (intersects.length > 0) {
-                this.startObject = intersects[0].object;
-                this.trigger_dragging(this.step);
-            }
-
-            if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
-                window.addEventListener('touchmove', this.brush);
-                if (this.step == 8) {
-                    this.experience.world.character.animation.actions.brushingURSK.play();
+    
+                window.removeEventListener('mousemove', this.brush);
+                window.removeEventListener('mousemove', this.dragging);
+            });
+    
+    
+            window.addEventListener('touchstart', (event) => {
+                this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+                this.mouse.y = - (event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
+    
+                this.raycaster.setFromCamera(this.mouse, this.camera.instance);
+    
+                const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    
+                if (intersects.length > 0) {
+                    this.startObject = intersects[0].object;
+                    this.trigger_dragging(this.step);
                 }
-                if (this.step == 9) {
-                    this.experience.world.character.animation.actions.brushingULSK.play();
+    
+                if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
+                    window.addEventListener('touchmove', this.brush);
+                    if (this.step == 8) {
+                        this.experience.world.character.animation.actions.brushingURSK.play();
+                    }
+                    if (this.step == 9) {
+                        this.experience.world.character.animation.actions.brushingULSK.play();
+                    }
+                    if (this.step == 11) {
+                        this.experience.world.character.animation.actions.brushingLRSK.play();
+                    }
+                    if (this.step == 12) {
+                        this.experience.world.character.animation.actions.brushingLLSK.play();
+                    }
+                    if (this.step == 14) {
+                        this.experience.world.character.animation.actions.brushingFSK.play();
+                    }
                 }
-                if (this.step == 11) {
-                    this.experience.world.character.animation.actions.brushingLRSK.play();
+            });
+            window.addEventListener('touchend', (event) => {
+                this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
+                this.mouse.y = - (event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
+    
+                this.raycaster.setFromCamera(this.mouse, this.camera.instance);
+    
+                const intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    
+                if (intersects.length > 0) {
+                    this.endObject = intersects[0].object;
+                    this.trigger_action(this.step);
                 }
-                if (this.step == 12) {
-                    this.experience.world.character.animation.actions.brushingLLSK.play();
+    
+                if (this.isDragging) {
+                    this.isReversing = true;
+                    this.isDragging = false;
                 }
-                if (this.step == 14) {
-                    this.experience.world.character.animation.actions.brushingFSK.play();
-                }
-            }
-        });
-        window.addEventListener('touchend', (event) => {
-            this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
-            this.mouse.y = - (event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
-
-            this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-
-            const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-            if (intersects.length > 0) {
-                this.endObject = intersects[0].object;
-                this.trigger_action(this.step);
-            }
-
-            if (this.isDragging) {
-                this.isReversing = true;
-                this.isDragging = false;
-            }
-
-            window.removeEventListener('touchmove', this.brush);
-            window.removeEventListener('touchmove', this.dragging);
+    
+                window.removeEventListener('touchmove', this.brush);
+                window.removeEventListener('touchmove', this.dragging);
+            });
         });
 
         this.sequence();
