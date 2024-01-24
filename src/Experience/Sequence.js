@@ -75,108 +75,101 @@ export default class Sequence {
             window.addEventListener('mousedown', (event) => {
                 this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-    
+
                 this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-    
+
                 const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    
+
                 if (intersects.length > 0) {
                     this.startObject = intersects[0].object;
                     this.trigger_dragging(this.step);
                 }
-    
+
                 if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
                     window.addEventListener('mousemove', this.brush);
                     if (this.step == 8)
                         this.experience.world.character.animation.actions.brushingURSK.play();
-                    if (this.step == 9) {
+                    if (this.step == 9)
                         this.experience.world.character.animation.actions.brushingULSK.play();
-                    }
-                    if (this.step == 11) {
+                    if (this.step == 11)
                         this.experience.world.character.animation.actions.brushingLRSK.play();
-                    }
-                    if (this.step == 12) {
+                    if (this.step == 12)
                         this.experience.world.character.animation.actions.brushingLLSK.play();
-                    }
-                    if (this.step == 14) {
+                    if (this.step == 14)
                         this.experience.world.character.animation.actions.brushingFSK.play();
-                    }
                 }
             });
             window.addEventListener('mouseup', (event) => {
                 // console.log(this.step);
                 this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
-    
+
                 this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-    
+
                 const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    
+
                 if (intersects.length > 0) {
                     this.endObject = intersects[0].object;
                     this.trigger_action(this.step);
                 }
-    
+
                 if (this.isDragging) {
                     this.isReversing = true;
                     this.isDragging = false;
+                    this.dragProgress.percent = 0;
                 }
-    
+
                 window.removeEventListener('mousemove', this.brush);
                 window.removeEventListener('mousemove', this.dragging);
             });
-    
-    
+
+
             window.addEventListener('touchstart', (event) => {
                 this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
                 this.mouse.y = - (event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
-    
+
                 this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-    
+
                 const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    
+
                 if (intersects.length > 0) {
                     this.startObject = intersects[0].object;
                     this.trigger_dragging(this.step);
                 }
-    
+
                 if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
                     window.addEventListener('touchmove', this.brush);
-                    if (this.step == 8) {
+                    if (this.step == 8)
                         this.experience.world.character.animation.actions.brushingURSK.play();
-                    }
-                    if (this.step == 9) {
+                    if (this.step == 9)
                         this.experience.world.character.animation.actions.brushingULSK.play();
-                    }
-                    if (this.step == 11) {
+                    if (this.step == 11)
                         this.experience.world.character.animation.actions.brushingLRSK.play();
-                    }
-                    if (this.step == 12) {
+                    if (this.step == 12)
                         this.experience.world.character.animation.actions.brushingLLSK.play();
-                    }
-                    if (this.step == 14) {
+                    if (this.step == 14)
                         this.experience.world.character.animation.actions.brushingFSK.play();
-                    }
                 }
             });
             window.addEventListener('touchend', (event) => {
                 this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
                 this.mouse.y = - (event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
-    
+
                 this.raycaster.setFromCamera(this.mouse, this.camera.instance);
-    
+
                 const intersects = this.raycaster.intersectObjects(this.scene.children, true);
-    
+
                 if (intersects.length > 0) {
                     this.endObject = intersects[0].object;
                     this.trigger_action(this.step);
                 }
-    
+
                 if (this.isDragging) {
                     this.isReversing = true;
                     this.isDragging = false;
+                    this.dragProgress.percent = 0;
                 }
-    
+
                 window.removeEventListener('touchmove', this.brush);
                 window.removeEventListener('touchmove', this.dragging);
             });
@@ -729,6 +722,7 @@ export default class Sequence {
             this.brushForward = true;
             if (this.brushingCount == 3) {
                 window.removeEventListener('mousemove', this.brush);
+                window.removeEventListener('touchmove', this.brush);
                 this.experience.world.cursor.hide();
                 this.brushingCount = 0;
                 this.availableAction = false;
