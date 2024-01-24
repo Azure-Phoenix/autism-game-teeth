@@ -648,7 +648,7 @@ export default class Sequence {
         }
 
         if (this.brushingCount == 0 && this.foamChange == true) {
-            console.log("brushingURSK0");
+            // console.log("brushingURSK0");
             // this.experience.world.foam.animation.foamMixer.stopAllAction();
             if (this.step == 8) {
                 this.experience.world.foam.animation.actions.brushingURSK0.reset();
@@ -687,14 +687,13 @@ export default class Sequence {
             this.brushForward = false;
         } else if (percentage == 0 && this.brushForward == false) {
             this.brushingCount++;
-            console.log("test");
+            // console.log("test");
             this.foamChange = true;
             // console.log(this.brushingCount);
             if (this.brushingCount == 1) {
-                console.log("brushingURSK1");
+                // console.log("brushingURSK1");
                 // this.experience.world.foam.animation.foamMixer.stopAllAction();
                 if (this.step == 8) {
-                    console.log("????????????");
                     this.experience.world.foam.animation.actions.brushingURSK1.play();
                     this.experience.world.foam.animation.actions.brushingURSK0.stop();
                 } else if (this.step == 9) {

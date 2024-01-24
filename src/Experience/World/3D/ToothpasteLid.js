@@ -55,7 +55,6 @@ export default class ToothpasteLid {
 
             if (name === "pickToothpaste" || name === "pickToothbrush" || name === "putBrush") {
                 newAction.reset();
-                console.log("reseted");
                 if (newAction != oldAction) {
                     newAction.play();
                     oldAction.stop();

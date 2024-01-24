@@ -99,7 +99,6 @@ export default class Foam {
 
         // Play the action
         this.animation.play = (name) => {
-            console.log("!!!!!!!!!!!!!!!!!!!!!!");
             const newAction = this.animation.actions[name];
             const oldAction = this.animation.actions.current;
 
@@ -114,7 +113,6 @@ export default class Foam {
 
             oldAction.stop();
             this.animation.actions.current = newAction;
-            console.log(this.animation.actions.current);
         }
     }
 
