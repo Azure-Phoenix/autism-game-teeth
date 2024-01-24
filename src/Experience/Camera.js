@@ -28,8 +28,8 @@ export default class Camera {
             0.1,
             1000
         );
-        this.instance.position.set(...this.camera_data[3].data.position);
-        this.instance.rotation.set(...this.camera_data[3].data.rotation);
+        this.instance.position.set(...this.camera_data[0].data.position);
+        this.instance.rotation.set(...this.camera_data[0].data.rotation);
         this.scene.add(this.instance);
 
         if (this.debug.active) {

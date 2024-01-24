@@ -15,7 +15,7 @@ export default class Sequence {
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
 
-        this.step = 4;
+        this.step = 1;
         this.promptLimit = 0;
         this.timeoutLimit = 0;
         this.passActions = [3, 6];
