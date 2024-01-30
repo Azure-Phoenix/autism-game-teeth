@@ -15,22 +15,22 @@ export default class Sequence {
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
 
-        this.step = 1;
-        this.promptLimit = 0;
-        this.timeoutLimit = 0;
-        this.passActions = [3, 6];
-        this.closeCamera = [7, 8, 9, 11, 12, 14]; //
-        this.openingCount = 0;
-        this.brushingCount = 0;
-        this.brushingAction = [8, 9, 11, 12, 14];
-        this.autoAction = [7, 10, 13, 15, 16, 17, 19, 20, 21, 22];
-        this.draggingAction = [1, 4, 18]
-        this.canControlBrushing = false;
-        this.availableAction = true;
-        this.brushForward = true;
-        this.isDragging = false;
-        this.isReversing = false;
-        this.foamChange = true;
+        this.step = 1; // current action step
+        this.promptLimit = 0; // Count prompt
+        this.timeoutLimit = 0; // Count timeout
+        this.passActions = [3, 6]; // No action steps
+        this.closeCamera = [7, 8, 9, 11, 12, 14]; // Close up camera when brushing
+        this.openingCount = 0; // Toothpaste Cap opening count - 3 times
+        this.brushingCount = 0; // Brushing count - 3 times
+        this.brushingAction = [8, 9, 11, 12, 14]; // Brushing Action Steps
+        this.autoAction = [7, 10, 13, 15, 16, 17, 19, 20, 21, 22]; // Auto pass action steps
+        this.draggingAction = [1, 4, 18] // Dragging Action Steps
+        this.canControlBrushing = false; // Flag for brushing
+        this.availableAction = true; // Flag for user interaction
+        this.brushForward = true; // Flag for brush direction
+        this.isDragging = false; // Flag for dragging
+        this.isReversing = false; // Flag for dragging action reversing
+        this.foamChange = true; // Flag for starting foam shaping
 
         this.gameFailure = 0;
         this.gameSuccess = 0;
@@ -72,6 +72,7 @@ export default class Sequence {
         this.endPoint[14] = new THREE.Vector3(-0.444, 1.3386489152908325, -0.09);
 
         this.loading.on('start', () => {
+            // Mouse events
             window.addEventListener('mousedown', (event) => {
                 this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
                 this.mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
@@ -123,7 +124,7 @@ export default class Sequence {
                 window.removeEventListener('mousemove', this.dragging);
             });
 
-
+            // Touch events
             window.addEventListener('touchstart', (event) => {
                 this.mouse.x = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
                 this.mouse.y = - (event.changedTouches[0].clientY / window.innerHeight) * 2 + 1;
@@ -185,38 +186,38 @@ export default class Sequence {
                 this.prompt_action(this.step);
             }, 1000);
 
+            // If action is finished
             this.experience.world.character.animation.mixer.addEventListener("finished", (e) => {
-                if (this.isReversing) {
+                if (this.isReversing) { // If action is reversing action
                     this.isReversing = false;
                     // console.log("finish reserving");
                     this.experience.world.toothbrush.animation.actions.current.paused = true;
                     this.experience.world.toothpaste.animation.actions.current.paused = true;
                     this.experience.world.toothpasteLid.animation.actions.current.paused = true;
-                } else if (!e.action._clip.name.includes("_SK")) {
-                    if (this.step == 23) {
+                } else if (!e.action._clip.name.includes("_SK")) { // If one step action is finished
+                    if (this.step == 23) { // If game is finished
                         this.confetti();
                         this.gameSuccess++;
                         this.refreshGame();
                     }
                     this.canControlBrushing = false;
                     this.availableAction = false;
-                    if (this.passActions.includes(this.step)) {
+                    if (this.passActions.includes(this.step)) { // If passActions
                         this.step++;
                     }
-                    // console.log(this.step);
                     this.camera_move(this.step);
-                    if (this.step == 20)
+                    if (this.step == 20) // All actions has 2 second of delay except 20th
                         this.play_action(this.step);
                     else {
                         setTimeout(() => {
-                            if (this.autoAction.includes(this.step)) {
+                            if (this.autoAction.includes(this.step)) { // If autoAction
                                 this.play_action(this.step);
                             } else {
-                                this.prompt_action(this.step);
+                                this.prompt_action(this.step); // Show Prompt
                             }
                         }, 2000);
                     }
-                    if (this.timeoutLimit == 3) {
+                    if (this.timeoutLimit == 3) { // Timeout
                         // Finish game
                         // alert("Time Out");
                         this.gameFailure++;
@@ -229,9 +230,8 @@ export default class Sequence {
 
     prompt_action(id) {
         this.promptLimit++;
-        if (this.promptLimit == 5) { // == 5
-            // do action automatically
-            if (this.brushingAction.includes(id)) { // for atomatic brushing actions.
+        if (this.promptLimit == 5) { // If user doesn't interact correctly during 4 prompts, do action automatically
+            if (this.brushingAction.includes(id)) { // for automatic brushing actions.
                 const width = window.innerWidth;
 
                 function fireMouseEvent(type, elem, x, y) {
@@ -296,7 +296,7 @@ export default class Sequence {
                 this.play_action(id);
             }
             this.timeoutLimit++;
-        } else {
+        } else { // Show prompt
             this.availableAction = true;
             this.canControlBrushing = true;
 
@@ -304,6 +304,7 @@ export default class Sequence {
             this.experience.world.cursor.show();
             this.experience.world.cursor.mesh.lookAt(this.camera.instance.position);
             this.experience.world.cursor.setScale(this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`].distanceTo(this.camera.instance.position));
+            // Audio indicator
             if (id == 1 || id == 4) {
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_pick);
             } else if (id == 2) {
@@ -313,18 +314,16 @@ export default class Sequence {
             } else if (this.brushingAction.includes(id)) {
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_brush);
             }
-            if (!this.brushingAction.includes(id)) {
+            if (!this.brushingAction.includes(id)) { // Prompt for normal Actions
                 gsap.fromTo(this.experience.world.cursor.mesh.position, this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`], {
                     duration: 1.5,
                     delay: 1,
                     ...this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_to`],
                     onComplete: () => {
                         this.experience.world.cursor.hide();
-                        // this.availableAction = true;
                     },
                 });
-            } else {
-                // console.log(id);
+            } else { // Prompt for brushing Actions
                 gsap.fromTo(this.experience.world.cursor.mesh.position, this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`], {
                     duration: 0.5,
                     delay: 1,
@@ -334,8 +333,6 @@ export default class Sequence {
                     ...this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_to`],
                     onComplete: () => {
                         this.experience.world.cursor.hide();
-                        // this.availableAction = true;
-                        // this.canControlBrushing = true;
                     },
                 });
             }
@@ -348,7 +345,7 @@ export default class Sequence {
         }
     }
 
-    draggingReady(id) {
+    draggingReady(id) { // Calculate dragging action from/to positions
         this.posFrom = this.experience.world.hidden.hiddenObj[`Hidden_Action_${id}_from`].position.clone();
         this.posTo = this.experience.world.hidden.hiddenObj[`Hidden_Action_${id}_to`].position.clone();
 
@@ -370,6 +367,7 @@ export default class Sequence {
         this.minY = Math.min(this.posFrom.y, this.posTo.y);
     }
 
+    // Dragging Action EventListener
     dragging = (event) => {
         let mousePos = new THREE.Vector2();
 
@@ -389,6 +387,7 @@ export default class Sequence {
             this.dragProgress.percent = Math.min(this.dragProgress.x, this.dragProgress.y);
         }
 
+        // Adjust time
         if (this.step == 1) {
             this.experience.world.character.animation.actions.pickToothpaste.time = this.experience.world.character.animation.actions.pickToothpaste.getClip().duration * (1 / 3) * Math.sqrt(this.dragProgress.percent);
             this.experience.world.toothpaste.animation.actions.pickToothpaste.time = this.experience.world.toothpaste.animation.actions.pickToothpaste.getClip().duration * (1 / 3) * Math.sqrt(this.dragProgress.percent);
@@ -402,6 +401,7 @@ export default class Sequence {
             this.experience.world.toothbrush.animation.actions.putBrush.time = this.experience.world.toothbrush.animation.actions.putBrush.getClip().duration / 2 * this.dragProgress.percent;
         }
 
+        // If dragging arrived to target area
         if (((mousePos.x >= this.posTo.x - window.innerWidth / 13) && (mousePos.x <= this.posTo.x)) && ((mousePos.y >= this.posTo.y) && (mousePos.y <= this.posTo.y + window.innerWidth / 13))) {
             // console.log("arrived at target");
             this.isDragging = false;
@@ -413,6 +413,7 @@ export default class Sequence {
         }
     }
 
+    // Trigger Dragging
     trigger_dragging(id) {
         if (this.draggingAction.includes(id)) {
             if (this.startObject.name === `Hidden_Action_${id}_from`) {
@@ -422,7 +423,6 @@ export default class Sequence {
                     this.step--;
                     this.draggingReady(id);
                     this.dragProgress.percent = 0;
-                    // this.experience.world.character.animation.actions.pickToothpaste.reset();
                     window.addEventListener('mousemove', this.dragging);
                     window.addEventListener('touchmove', this.dragging);
                 }
@@ -430,6 +430,7 @@ export default class Sequence {
         }
     }
 
+    // Trigger Normal Action
     trigger_action(id) {
         if (this.startObject.name === `Hidden_Action_${id}_from` && this.endObject.name === `Hidden_Action_${id}_to` && !this.brushingAction.includes(id) && !this.draggingAction.includes(id)) {
             if (this.availableAction || this.autoAction.includes(id)) {
@@ -442,6 +443,7 @@ export default class Sequence {
         }
     }
 
+    // Defining Action steps
     play_action(id) {
         this.promptLimit = 0;
         this.step++;
@@ -585,35 +587,36 @@ export default class Sequence {
         }
     }
 
+    // Brushing Action EventListener
     brush = (event) => {
-        // console.log("dragging");
+        // For PC
         let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
 
+        // For Mobile
         if (isNaN(mouseX)) {
             mouseX = (event.changedTouches[0].clientX / window.innerWidth) * 2 - 1;
         }
 
         let delta;
-        if (this.step == 8 || this.step == 11) {
+        if (this.step == 8 || this.step == 11) { // Left direction
             delta = (mouseX - this.mouse.x) * 4;
-        } else if (this.step == 9 || this.step == 12 || this.step == 14) {
+        } else if (this.step == 9 || this.step == 12 || this.step == 14) { // Right direction
             delta = - (mouseX - this.mouse.x) * 4;
         }
-        // console.log(this.experience.world.toothbrush.model.children[0].position);
-        // console.log(this.experience.world.toothbrush.model.children[0].rotation);
 
+        // Set brush's position & rotation
         this.experience.world.toothbrush.model.children[0].position.set(
             this.startPoint[this.step].x + (this.startPoint[this.step].x - this.endPoint[this.step].x) * delta,
             this.startPoint[this.step].y + (this.startPoint[this.step].y - this.endPoint[this.step].y) * delta,
             this.startPoint[this.step].z + (this.startPoint[this.step].z - this.endPoint[this.step].z) * delta
         )
-
         this.experience.world.toothbrush.model.children[0].rotation.set(
             this.startRotation[this.step].x + (this.startRotation[this.step].x - this.endRotation[this.step].x) * delta,
             this.startRotation[this.step].y + (this.startRotation[this.step].y - this.endRotation[this.step].y) * delta,
             this.startRotation[this.step].z + (this.startRotation[this.step].z - this.endRotation[this.step].z) * delta
         )
 
+        // Limit brush position & rotation
         if (this.step == 8 || this.step == 11) {
             if (this.experience.world.toothbrush.model.children[0].position.z <= this.endPoint[this.step].z) {
                 this.experience.world.toothbrush.model.children[0].position.copy(this.endPoint[this.step]);
@@ -640,9 +643,8 @@ export default class Sequence {
             }
         }
 
+        // Foam shaping for first brushing
         if (this.brushingCount == 0 && this.foamChange == true) {
-            // console.log("brushingURSK0");
-            // this.experience.world.foam.animation.foamMixer.stopAllAction();
             if (this.step == 8) {
                 this.experience.world.foam.animation.actions.brushingURSK0.reset();
                 this.experience.world.foam.animation.actions.brushingURSK0.play();
@@ -667,6 +669,7 @@ export default class Sequence {
             this.foamChange = false;
         }
 
+        // Limit brush percentage
         let percentage = (this.startPoint[this.step].z - this.experience.world.toothbrush.model.children[0].position.z) / (this.startPoint[this.step].z - this.endPoint[this.step].z);
         if (percentage < 0) {
             percentage = 0;
@@ -676,16 +679,12 @@ export default class Sequence {
 
         let brushPercentage, foamPercentage;
 
-        if (percentage == 1 && this.brushForward == true) {
+        if (percentage == 1 && this.brushForward == true) { // Brushing forward
             this.brushForward = false;
-        } else if (percentage == 0 && this.brushForward == false) {
+        } else if (percentage == 0 && this.brushForward == false) { // Brushing backward
             this.brushingCount++;
-            // console.log("test");
             this.foamChange = true;
-            // console.log(this.brushingCount);
-            if (this.brushingCount == 1) {
-                // console.log("brushingURSK1");
-                // this.experience.world.foam.animation.foamMixer.stopAllAction();
+            if (this.brushingCount == 1) { // Foam shaping from second brushing
                 if (this.step == 8) {
                     this.experience.world.foam.animation.actions.brushingURSK1.play();
                     this.experience.world.foam.animation.actions.brushingURSK0.stop();
@@ -706,6 +705,7 @@ export default class Sequence {
             } else if (this.brushingCount == 2) {
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_two);
             } else if (this.brushingCount == 3) {
+                // Pause foam shaping
                 if (this.step == 8) {
                     this.experience.world.foam.animation.actions.brushingURSK1.paused = true;
                 } else if (this.step == 9) {
@@ -720,7 +720,7 @@ export default class Sequence {
                 this.experience.world.instruct.playSound(this.experience.world.instruct.a_three);
             }
             this.brushForward = true;
-            if (this.brushingCount == 3) {
+            if (this.brushingCount == 3) { // Finish brushing
                 window.removeEventListener('mousemove', this.brush);
                 window.removeEventListener('touchmove', this.brush);
                 this.experience.world.cursor.hide();
@@ -733,12 +733,14 @@ export default class Sequence {
             }
         }
 
+        // Foam shaping percentage
         if (this.brushForward == true) {
             foamPercentage = percentage * 0.5;
         } else {
             foamPercentage = 1 - percentage * 0.5;
         }
 
+        // Adjust brush percentage
         if (this.step == 12) {
             if (this.brushForward == true) {
                 brushPercentage = 0.9 + percentage * 0.4;
@@ -759,7 +761,9 @@ export default class Sequence {
             }
         }
 
+        // Shaping cheek
         this.experience.world.character.animation.brushingMixer.setTime(this.experience.world.character.animation.actions.brushingURSK.getClip().duration * (brushPercentage / 2));
+        // Shaping foam
         if (this.step == 14) {
             this.experience.world.foam.animation.foamMixer.setTime(this.experience.world.foam.animation.actions.brushingFSK1.getClip().duration * foamPercentage);
         } else {
@@ -767,16 +771,17 @@ export default class Sequence {
         }
     }
 
+    // Camera Movement
     camera_move(id) {
-        // console.log("camera", this.step);
-        if (this.closeCamera.includes(id)) {
+        if (this.closeCamera.includes(id)) { // Close Up Camera
             this.experience.camera.instance.fov = 30;
             this.experience.camera.instance.updateProjectionMatrix();
-        } else {
+        } else { // Normal Camera
             this.experience.camera.instance.fov = 60;
             this.experience.camera.instance.updateProjectionMatrix();
         }
 
+        // Camera Movement
         gsap.fromTo(this.experience.camera.instance.position,
             this.experience.camera.instance.position,
             {
@@ -787,6 +792,7 @@ export default class Sequence {
             }
         );
 
+        // Camera Rotation
         let startQuaternion = new THREE.Quaternion().copy(this.experience.camera.instance.quaternion);
         let endQuaternion = new THREE.Quaternion();
         endQuaternion.setFromEuler(new THREE.Euler(
@@ -807,6 +813,7 @@ export default class Sequence {
         });
     }
 
+    // Confetti
     confetti() {
         this.jsConfetti.addConfetti({
             confettiRadius: 3,
@@ -819,6 +826,7 @@ export default class Sequence {
         });
     }
 
+    // Refresh Game
     refreshGame() {
         if (this.gameFailure == 3) {
             alert("Game Over!");
@@ -847,8 +855,7 @@ export default class Sequence {
         this.experience.world.foam.refresh();
 
         this.camera_move(1);
-        // this.experience.camera.instance.position.set(...this.experience.camera.camera_data[0].data.position);
-        // this.experience.camera.instance.rotation.set(...this.experience.camera.camera_data[0].data.rotation);
+        
         setTimeout(() => {
             this.sequence();
         }, 4000);
