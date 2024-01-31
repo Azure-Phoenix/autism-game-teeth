@@ -6,6 +6,12 @@ export default [
     },
 
     {
+        name: 'royal_esplanade_1k',
+        type: 'envMap',
+        path: 'environment/royal_esplanade_1k.hdr'
+    },
+
+    {
         name: 'hidden',
         type: 'gltfModel',
         path: 'models/hidden.glb'

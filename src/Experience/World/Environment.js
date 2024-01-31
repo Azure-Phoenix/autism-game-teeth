@@ -1,7 +1,7 @@
-import * as THREE from 'three';
-import Experience from '../Experience.js';
+import * as THREE from "three";
+import Experience from "../Experience.js";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 export default class Environment {
     constructor() {
@@ -13,9 +13,9 @@ export default class Environment {
         this.pmremGenerator = new THREE.PMREMGenerator(this.renderer.instance);
         this.roomEnvironment = new RoomEnvironment();
 
-        this.axesHelper  = new THREE.AxesHelper(10, 10, 10);
+        this.axesHelper = new THREE.AxesHelper(10, 10, 10);
         this.axesHelper.traverse((child) => {
-            if(child.material) {
+            if (child.material) {
                 // child.material.depthTest = false;
                 // child.material.depthWrite = false;
             }
@@ -38,8 +38,8 @@ export default class Environment {
         // Debug
         if (this.debug.active) {
             this.debugFolder
-                .add(this.ambientLight, 'intensity')
-                .name('sunLightIntensity')
+                .add(this.ambientLight, "intensity")
+                .name("sunLightIntensity")
                 .min(0)
                 .max(10)
                 .step(0.001);
@@ -54,13 +54,10 @@ export default class Environment {
     }
 
     setEnvironment() {
-        new RGBELoader()
-            .setPath('environment/')
-            .load('royal_esplanade_1k.hdr', (texture) => {
-                texture.mapping = THREE.EquirectangularReflectionMapping;
+        let texture = this.resources.items.royal_esplanade_1k;
+        texture.mapping = THREE.EquirectangularReflectionMapping;
 
-                // this.scene.background = texture;
-                this.scene.environment = texture;
-            });
+        // this.scene.background = texture;
+        this.scene.environment = texture;
     }
 }
