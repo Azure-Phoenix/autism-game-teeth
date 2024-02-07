@@ -23,9 +23,9 @@ export default class Sequence {
         this.openingCount = 0; // Toothpaste Cap opening count - 3 times
         this.brushingCount = 0; // Brushing count - 3 times
         this.brushingAction = [8, 9, 11, 12, 14]; // Brushing Action Steps
-        this.autoAction = [7, 10, 13, 15, 16, 17, 19, 20, 21, 22]; // Auto pass action steps
+        this.autoAction = [4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]; // Auto pass action steps
         this.draggingAction = [1, 4, 18] // Dragging Action Steps
-        this.canControlBrushing = false; // Flag for brushing
+        this.canControlBrushing = true; // Flag for brushing
         this.availableAction = true; // Flag for user interaction
         this.brushForward = true; // Flag for brush direction
         this.isDragging = false; // Flag for dragging
@@ -200,7 +200,7 @@ export default class Sequence {
                         this.gameSuccess++;
                         this.refreshGame();
                     }
-                    this.canControlBrushing = false;
+                    // this.canControlBrushing = false;
                     this.availableAction = false;
                     if (this.passActions.includes(this.step)) { // If passActions
                         this.step++;
@@ -211,7 +211,72 @@ export default class Sequence {
                     else {
                         setTimeout(() => {
                             if (this.autoAction.includes(this.step)) { // If autoAction
-                                this.play_action(this.step);
+                                if (this.brushingAction.includes(this.step)) { // for automatic brushing actions.
+                                    console.log(this.canControlBrushing);
+                                    const width = window.innerWidth;
+                    
+                                    function fireMouseEvent(type, elem, x, y) {
+                                        const evt = new MouseEvent(type, {
+                                            view: window,
+                                            bubbles: true,
+                                            cancelable: true,
+                                            clientX: x,
+                                            clientY: y
+                                        });
+                                        elem.dispatchEvent(evt);
+                                    }
+                    
+                                    let currentPosition = { x: width / 2, y: window.innerHeight / 2 }
+                    
+                                    function doMouseActions() {
+                                        const elem = document.elementFromPoint(currentPosition.x, currentPosition.y);
+                    
+                                        // Mouse Down at center
+                                        fireMouseEvent('mousedown', elem, currentPosition.x, currentPosition.y);
+                    
+                                        const actions = [
+                                            { direction: 'right', percent: 20 },
+                                            { direction: 'left', percent: 40 },
+                                            { direction: 'right', percent: 40 },
+                                            { direction: 'left', percent: 40 },
+                                            { direction: 'right', percent: 40 },
+                                            { direction: 'left', percent: 40 },
+                                            { direction: 'right', percent: 40 },
+                                        ];
+                    
+                                        let actionPromise = Promise.resolve();
+                                        actions.forEach((action, i) => {
+                                            let moveAmount = width * (action.percent / 100);
+                                            if (action.direction === 'left') {
+                                                moveAmount *= -1;
+                                            }
+                    
+                                            // Number of steps for smoothness
+                                            let steps = 100;
+                    
+                                            for (let j = 0; j < steps; j++) {
+                                                actionPromise = actionPromise.then(() => new Promise(resolve => {
+                                                    setTimeout(() => {
+                                                        console.log(currentPosition.x);
+                                                        currentPosition.x += moveAmount / steps;
+                                                        fireMouseEvent('mousemove', elem, currentPosition.x, currentPosition.y);
+                                                        resolve();
+                                                    }, 1000 / steps);
+                                                }));
+                                            }
+                                        });
+                                        actionPromise.then(() => {
+                                            setTimeout(() => {
+                                                // Mouse Up
+                                                fireMouseEvent('mouseup', elem, currentPosition.x, currentPosition.y);
+                                            }, 500);
+                                        });
+                                    }
+                    
+                                    doMouseActions();
+                                } else {
+                                    this.play_action(this.step);
+                                }
                             } else {
                                 this.prompt_action(this.step); // Show Prompt
                             }
@@ -232,66 +297,66 @@ export default class Sequence {
         this.promptLimit++;
         if (this.promptLimit == 5) { // If user doesn't interact correctly during 4 prompts, do action automatically
             if (this.brushingAction.includes(id)) { // for automatic brushing actions.
-                const width = window.innerWidth;
+                // const width = window.innerWidth;
 
-                function fireMouseEvent(type, elem, x, y) {
-                    const evt = new MouseEvent(type, {
-                        view: window,
-                        bubbles: true,
-                        cancelable: true,
-                        clientX: x,
-                        clientY: y
-                    });
-                    elem.dispatchEvent(evt);
-                }
+                // function fireMouseEvent(type, elem, x, y) {
+                //     const evt = new MouseEvent(type, {
+                //         view: window,
+                //         bubbles: true,
+                //         cancelable: true,
+                //         clientX: x,
+                //         clientY: y
+                //     });
+                //     elem.dispatchEvent(evt);
+                // }
 
-                let currentPosition = { x: width / 2, y: window.innerHeight / 2 }
+                // let currentPosition = { x: width / 2, y: window.innerHeight / 2 }
 
-                function doMouseActions() {
-                    const elem = document.elementFromPoint(currentPosition.x, currentPosition.y);
+                // function doMouseActions() {
+                //     const elem = document.elementFromPoint(currentPosition.x, currentPosition.y);
 
-                    // Mouse Down at center
-                    fireMouseEvent('mousedown', elem, currentPosition.x, currentPosition.y);
+                //     // Mouse Down at center
+                //     fireMouseEvent('mousedown', elem, currentPosition.x, currentPosition.y);
 
-                    const actions = [
-                        { direction: 'right', percent: 20 },
-                        { direction: 'left', percent: 40 },
-                        { direction: 'right', percent: 40 },
-                        { direction: 'left', percent: 40 },
-                        { direction: 'right', percent: 40 },
-                        { direction: 'left', percent: 40 },
-                        { direction: 'right', percent: 40 },
-                    ];
+                //     const actions = [
+                //         { direction: 'right', percent: 20 },
+                //         { direction: 'left', percent: 40 },
+                //         { direction: 'right', percent: 40 },
+                //         { direction: 'left', percent: 40 },
+                //         { direction: 'right', percent: 40 },
+                //         { direction: 'left', percent: 40 },
+                //         { direction: 'right', percent: 40 },
+                //     ];
 
-                    let actionPromise = Promise.resolve();
-                    actions.forEach((action, i) => {
-                        let moveAmount = width * (action.percent / 100);
-                        if (action.direction === 'left') {
-                            moveAmount *= -1;
-                        }
+                //     let actionPromise = Promise.resolve();
+                //     actions.forEach((action, i) => {
+                //         let moveAmount = width * (action.percent / 100);
+                //         if (action.direction === 'left') {
+                //             moveAmount *= -1;
+                //         }
 
-                        // Number of steps for smoothness
-                        let steps = 100;
+                //         // Number of steps for smoothness
+                //         let steps = 100;
 
-                        for (let j = 0; j < steps; j++) {
-                            actionPromise = actionPromise.then(() => new Promise(resolve => {
-                                setTimeout(() => {
-                                    currentPosition.x += moveAmount / steps;
-                                    fireMouseEvent('mousemove', elem, currentPosition.x, currentPosition.y);
-                                    resolve();
-                                }, 1000 / steps);
-                            }));
-                        }
-                    });
-                    actionPromise.then(() => {
-                        setTimeout(() => {
-                            // Mouse Up
-                            fireMouseEvent('mouseup', elem, currentPosition.x, currentPosition.y);
-                        }, 500);
-                    });
-                }
+                //         for (let j = 0; j < steps; j++) {
+                //             actionPromise = actionPromise.then(() => new Promise(resolve => {
+                //                 setTimeout(() => {
+                //                     currentPosition.x += moveAmount / steps;
+                //                     fireMouseEvent('mousemove', elem, currentPosition.x, currentPosition.y);
+                //                     resolve();
+                //                 }, 1000 / steps);
+                //             }));
+                //         }
+                //     });
+                //     actionPromise.then(() => {
+                //         setTimeout(() => {
+                //             // Mouse Up
+                //             fireMouseEvent('mouseup', elem, currentPosition.x, currentPosition.y);
+                //         }, 500);
+                //     });
+                // }
 
-                doMouseActions();
+                // doMouseActions();
             } else {
                 this.play_action(id);
             }
@@ -434,7 +499,7 @@ export default class Sequence {
     trigger_action(id) {
         if (this.startObject.name === `Hidden_Action_${id}_from` && this.endObject.name === `Hidden_Action_${id}_to` && !this.brushingAction.includes(id) && !this.draggingAction.includes(id)) {
             if (this.availableAction || this.autoAction.includes(id)) {
-                this.canControlBrushing = false;
+                // this.canControlBrushing = false;
                 this.availableAction = false;
                 this.experience.world.cursor.hide();
                 this.confetti();
@@ -726,7 +791,7 @@ export default class Sequence {
                 this.experience.world.cursor.hide();
                 this.brushingCount = 0;
                 this.availableAction = false;
-                this.canControlBrushing = false;
+                // this.canControlBrushing = false;
                 this.experience.world.character.animation.brushingMixer.stopAllAction();
                 this.confetti();
                 this.play_action(this.step);
@@ -840,7 +905,7 @@ export default class Sequence {
         this.timeoutLimit = 0;
         this.openingCount = 0;
         this.brushingCount = 0;
-        this.canControlBrushing = false;
+        // this.canControlBrushing = false;
         this.availableAction = false;
         this.brushForward = true;
 
