@@ -213,67 +213,7 @@ export default class Sequence {
                             if (this.autoAction.includes(this.step)) { // If autoAction
                                 if (this.brushingAction.includes(this.step)) { // for automatic brushing actions.
                                     console.log(this.canControlBrushing);
-                                    const width = window.innerWidth;
-                    
-                                    function fireMouseEvent(type, elem, x, y) {
-                                        const evt = new MouseEvent(type, {
-                                            view: window,
-                                            bubbles: true,
-                                            cancelable: true,
-                                            clientX: x,
-                                            clientY: y
-                                        });
-                                        elem.dispatchEvent(evt);
-                                    }
-                    
-                                    let currentPosition = { x: width / 2, y: window.innerHeight / 2 }
-                    
-                                    function doMouseActions() {
-                                        const elem = document.elementFromPoint(currentPosition.x, currentPosition.y);
-                    
-                                        // Mouse Down at center
-                                        fireMouseEvent('mousedown', elem, currentPosition.x, currentPosition.y);
-                    
-                                        const actions = [
-                                            { direction: 'right', percent: 20 },
-                                            { direction: 'left', percent: 40 },
-                                            { direction: 'right', percent: 40 },
-                                            { direction: 'left', percent: 40 },
-                                            { direction: 'right', percent: 40 },
-                                            { direction: 'left', percent: 40 },
-                                            { direction: 'right', percent: 40 },
-                                        ];
-                    
-                                        let actionPromise = Promise.resolve();
-                                        actions.forEach((action, i) => {
-                                            let moveAmount = width * (action.percent / 100);
-                                            if (action.direction === 'left') {
-                                                moveAmount *= -1;
-                                            }
-                    
-                                            // Number of steps for smoothness
-                                            let steps = 100;
-                    
-                                            for (let j = 0; j < steps; j++) {
-                                                actionPromise = actionPromise.then(() => new Promise(resolve => {
-                                                    setTimeout(() => {
-                                                        console.log(currentPosition.x);
-                                                        currentPosition.x += moveAmount / steps;
-                                                        fireMouseEvent('mousemove', elem, currentPosition.x, currentPosition.y);
-                                                        resolve();
-                                                    }, 1000 / steps);
-                                                }));
-                                            }
-                                        });
-                                        actionPromise.then(() => {
-                                            setTimeout(() => {
-                                                // Mouse Up
-                                                fireMouseEvent('mouseup', elem, currentPosition.x, currentPosition.y);
-                                            }, 500);
-                                        });
-                                    }
-                    
-                                    doMouseActions();
+                                    this.auto_brushing(this.step);
                                 } else {
                                     this.play_action(this.step);
                                 }
@@ -291,6 +231,81 @@ export default class Sequence {
                 }
             });
         });
+    }
+
+    auto_brushing(id) {
+        const width = window.innerWidth;
+        function fireMouseEvent(type, elem, x, y) {
+            const evt = new MouseEvent(type, {
+                view: window,
+                bubbles: true,
+                cancelable: true,
+                clientX: x,
+                clientY: y
+            });
+            elem.dispatchEvent(evt);
+        }
+
+        let currentPosition = { x: width / 2, y: 1 }
+
+        function doMouseActions() {
+            const elem = document.elementFromPoint(currentPosition.x, currentPosition.y);
+
+            // Mouse Down at center
+            fireMouseEvent('mousedown', elem, currentPosition.x, currentPosition.y);
+
+            let actions;
+            if (id == 9 || id == 12 || id == 14) {
+                actions = [
+                    { direction: 'right', percent: 20 },
+                    { direction: 'left', percent: 40 },
+                    { direction: 'right', percent: 40 },
+                    { direction: 'left', percent: 40 },
+                    { direction: 'right', percent: 40 },
+                    { direction: 'left', percent: 40 },
+                    { direction: 'right', percent: 40 },
+                ];
+            } else {
+                actions = [
+                    { direction: 'left', percent: 20 },
+                    { direction: 'right', percent: 40 },
+                    { direction: 'left', percent: 40 },
+                    { direction: 'right', percent: 40 },
+                    { direction: 'left', percent: 40 },
+                    { direction: 'right', percent: 40 },
+                    { direction: 'left', percent: 40 },
+                ];
+            }
+
+            let actionPromise = Promise.resolve();
+            actions.forEach((action, i) => {
+                let moveAmount = width * (action.percent / 100);
+                if (action.direction === 'left') {
+                    moveAmount *= -1;
+                }
+
+                // Number of steps for smoothness
+                let steps = 100;
+
+                for (let j = 0; j < steps; j++) {
+                    actionPromise = actionPromise.then(() => new Promise(resolve => {
+                        setTimeout(() => {
+                            currentPosition.x += moveAmount / steps;
+                            fireMouseEvent('mousemove', elem, currentPosition.x, currentPosition.y);
+                            resolve();
+                        }, 1000 / steps);
+                    }));
+                }
+            });
+            actionPromise.then(() => {
+                setTimeout(() => {
+                    // Mouse Up
+                    fireMouseEvent('mouseup', elem, currentPosition.x, currentPosition.y);
+                }, 500);
+            });
+        }
+
+        doMouseActions();
     }
 
     prompt_action(id) {
@@ -654,6 +669,12 @@ export default class Sequence {
 
     // Brushing Action EventListener
     brush = (event) => {
+        if(event.clientY != 1) {
+            return;
+        }
+        if (isNaN(event.clientY)) {
+            if(event.changedTouches[0].clientX != 1) return;
+        }
         // For PC
         let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
 
@@ -920,7 +941,7 @@ export default class Sequence {
         this.experience.world.foam.refresh();
 
         this.camera_move(1);
-        
+
         setTimeout(() => {
             this.sequence();
         }, 4000);
