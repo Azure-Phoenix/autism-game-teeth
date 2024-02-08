@@ -31,6 +31,7 @@ export default class Sequence {
         this.isDragging = false; // Flag for dragging
         this.isReversing = false; // Flag for dragging action reversing
         this.foamChange = true; // Flag for starting foam shaping
+        this.isAutoBrushing = false; // Brushing is running automatically or not
 
         this.gameFailure = 0;
         this.gameSuccess = 0;
@@ -232,6 +233,7 @@ export default class Sequence {
         this.promptLimit++;
         if (this.promptLimit == 5) { // If user doesn't interact correctly during 4 prompts, do action automatically
             if (this.brushingAction.includes(id)) { // for automatic brushing actions.
+                this.isAutoBrushing = true;
                 const width = window.innerWidth;
 
                 function fireMouseEvent(type, elem, x, y) {
@@ -245,23 +247,36 @@ export default class Sequence {
                     elem.dispatchEvent(evt);
                 }
 
-                let currentPosition = { x: width / 2, y: window.innerHeight / 2 }
+                let currentPosition = { x: width / 2, y: 1 }
 
-                function doMouseActions() {
+                const doMouseActions = () => {
                     const elem = document.elementFromPoint(currentPosition.x, currentPosition.y);
 
                     // Mouse Down at center
                     fireMouseEvent('mousedown', elem, currentPosition.x, currentPosition.y);
 
-                    const actions = [
-                        { direction: 'right', percent: 20 },
-                        { direction: 'left', percent: 40 },
-                        { direction: 'right', percent: 40 },
-                        { direction: 'left', percent: 40 },
-                        { direction: 'right', percent: 40 },
-                        { direction: 'left', percent: 40 },
-                        { direction: 'right', percent: 40 },
-                    ];
+                    let actions;
+                    if (id == 9 || id == 12 || id == 14) {
+                        actions = [
+                            { direction: 'right', percent: 20 },
+                            { direction: 'left', percent: 40 },
+                            { direction: 'right', percent: 40 },
+                            { direction: 'left', percent: 40 },
+                            { direction: 'right', percent: 40 },
+                            { direction: 'left', percent: 40 },
+                            { direction: 'right', percent: 40 },
+                        ];
+                    } else {
+                        actions = [
+                            { direction: 'left', percent: 20 },
+                            { direction: 'right', percent: 40 },
+                            { direction: 'left', percent: 40 },
+                            { direction: 'right', percent: 40 },
+                            { direction: 'left', percent: 40 },
+                            { direction: 'right', percent: 40 },
+                            { direction: 'left', percent: 40 },
+                        ];
+                    }
 
                     let actionPromise = Promise.resolve();
                     actions.forEach((action, i) => {
@@ -287,6 +302,7 @@ export default class Sequence {
                         setTimeout(() => {
                             // Mouse Up
                             fireMouseEvent('mouseup', elem, currentPosition.x, currentPosition.y);
+                            this.isAutoBrushing = false;
                         }, 500);
                     });
                 }
@@ -589,6 +605,10 @@ export default class Sequence {
 
     // Brushing Action EventListener
     brush = (event) => {
+        if (this.isAutoBrushing && event.clientY != 1) return;
+        if (isNaN(event.clientY)) {
+            if (this.isAutoBrushing && event.changedTouches[0].clientY != 1) return;
+        }
         // For PC
         let mouseX = (event.clientX / window.innerWidth) * 2 - 1;
 
@@ -855,7 +875,7 @@ export default class Sequence {
         this.experience.world.foam.refresh();
 
         this.camera_move(1);
-        
+
         setTimeout(() => {
             this.sequence();
         }, 4000);
