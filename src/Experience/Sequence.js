@@ -1244,7 +1244,7 @@ export default class Sequence {
       attemptCount: 0, //
       tag: "Animation_Game", //
       durartionInSec: this.gameDuration, //
-      score: this.gameScore, //
+      score: this.gameScore * 100, //
       assetDuration: this.gameDuration, //
       successInteractions: this.successInterection, //
       totalInteractions: this.totalInteraction, //
