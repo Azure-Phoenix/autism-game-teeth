@@ -152,20 +152,24 @@ export default class Foam {
     }
 
     refresh() {
-        this.animation.foamMixer.stopAllAction();
-        this.animation.actions.idle8SK.play();
-        this.animation.actions.idle9SK.play();
-        this.animation.actions.idle11SK.play();
-        this.animation.actions.idle12SK.play();
-        this.animation.actions.idle14SK.play();
-        this.animation.mixer.stopAllAction();
-        this.animation.actions.idle8.play();
-        this.animation.actions.idle9.play();
-        this.animation.actions.idle11.play();
-        this.animation.actions.idle12.play();
-        this.animation.actions.idle14.play();
+        // Removing the model from the scene
+        this.scene.remove(this.model)
+    
+        // Stop the current action
+        if (this.animation.actions.current) {
+          this.animation.actions.current.stop()
+        }
+    
+        // Delete the actions and the mixer
+        this.animation.actions = {}
+        this.animation.mixer = null
+    
         this.model.visible = true;
-    }
+    
+        // Recreate the model and animation
+        this.setModel()
+        this.setAnimation()
+      }
 
     update() {
         this.animation.mixer.update(this.time.delta);
