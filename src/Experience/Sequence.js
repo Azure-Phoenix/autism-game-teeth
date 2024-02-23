@@ -309,7 +309,7 @@ export default class Sequence {
             // If one step action is finished
             if (this.step == 23) {
               // If game is finished
-              this.confetti()
+              // this.confetti()
               this.gameSuccess = true
               this.finishType = "Success"
               this.refreshGame()
