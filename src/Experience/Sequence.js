@@ -30,7 +30,6 @@ export default class Sequence {
     this.isDragging = false // Flag for dragging
     this.isReversing = false // Flag for dragging action reversing
     this.foamChange = true // Flag for starting foam shaping
-    this.isAutoBrushing = true // Brushing is running automatically or not
     this.perStepPecentage = 1 / 6
 
     this.gameFailure = 0
@@ -125,7 +124,6 @@ export default class Sequence {
           this.scores[this.scores.length - 1]
         )
 
-        console.log(this.scores)
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
         this.interactPositions.push({ x: this.mouse.x, y: this.mouse.y })
@@ -139,8 +137,9 @@ export default class Sequence {
           this.trigger_dragging(this.step)
         }
 
-        if (!this.autoAction.includes(this.step)) {
-          if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
+        // if (!this.autoAction.includes(this.step)) {
+        if (event.clientY == 1) {
+          if (this.brushingAction.includes(this.step)) {
             window.addEventListener("mousemove", this.brush)
             if (this.step == 8)
               this.experience.world.character.animation.actions.brushingURSK.play()
@@ -154,7 +153,7 @@ export default class Sequence {
               this.experience.world.character.animation.actions.brushingFSK.play()
           }
         } else {
-          if (this.brushingAction.includes(this.step)) {
+          if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
             window.addEventListener("mousemove", this.brush)
             if (this.step == 8)
               this.experience.world.character.animation.actions.brushingURSK.play()
@@ -189,7 +188,13 @@ export default class Sequence {
           this.dragProgress.percent = 0
         }
 
-        window.removeEventListener("mousemove", this.brush)
+        if (this.canControlBrushing) {
+          window.removeEventListener("mousemove", this.brush)
+        } else {
+          if (event.clientY == 1) {
+            window.removeEventListener("mousemove", this.brush)
+          } else return
+        }
         window.removeEventListener("mousemove", this.dragging)
       })
 
@@ -287,7 +292,7 @@ export default class Sequence {
           }
           console.log(this.responseTimes)
         }, 1000)
-      }, 1000)
+      }, 0)
 
       // If action is finished
       this.experience.world.character.animation.mixer.addEventListener(
@@ -324,7 +329,6 @@ export default class Sequence {
                 if (this.autoAction.includes(this.step)) {
                   if (this.brushingAction.includes(this.step)) {
                     // for automatic brushing actions.
-                    this.isAutoBrushing = true
                     this.auto_brushing(this.step)
                   } else {
                     this.play_action(this.step)
@@ -433,7 +437,6 @@ export default class Sequence {
         setTimeout(() => {
           // Mouse Up
           fireMouseEvent("mouseup", elem, currentPosition.x, currentPosition.y)
-          this.isAutoBrushing = false
         }, 500)
       })
     }
@@ -451,7 +454,6 @@ export default class Sequence {
       this.finishResponseInterval = true
       if (this.brushingAction.includes(id)) {
         // for automatic brushing actions.
-        this.isAutoBrushing = true
         this.auto_brushing(id)
       } else {
         this.play_action(id)
@@ -460,7 +462,7 @@ export default class Sequence {
     } else {
       // Show prompt
       this.availableAction = true
-      this.canControlBrushing = true
+      // this.canControlBrushing = true
 
       this.experience.world.cursor.setPosition(
         this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`]
@@ -631,8 +633,7 @@ export default class Sequence {
       // console.log("arrived at target");
       this.isDragging = false
       this.step++
-      this.confetti()
-      console.log(this.step)
+      if (this.step != 19) this.confetti()
       if (this.step == 2) this.tags.push("Pick Toothpaste")
       else if (this.step == 5) this.tags.push("Pick Toothbrush")
       else if (this.step == 19) this.tags.push("Put Brush")
@@ -731,6 +732,7 @@ export default class Sequence {
       //     this.play_action(this.step);
       //     break;
       case 4: // Action 4: Pick Toothbrush
+        // if (this.gameVariation == 1) this.exportMetrics()
         this.experience.world.character.animation.play("pickToothbrush")
         this.experience.world.toothpaste.animation.play("pickToothbrush")
         this.experience.world.toothbrush.animation.play("pickToothbrush")
@@ -841,9 +843,9 @@ export default class Sequence {
 
   // Brushing Action EventListener
   brush = (event) => {
-    if (this.isAutoBrushing && event.clientY != 1) return
+    if (event.clientY != 1 && !this.canControlBrushing) return
     if (isNaN(event.clientY)) {
-      if (this.isAutoBrushing && event.changedTouches[0].clientY != 1) return
+      if (event.changedTouches[0].clientY != 1 && !this.canControlBrushing) return
     }
     // For PC
     let mouseX = (event.clientX / window.innerWidth) * 2 - 1
@@ -1039,7 +1041,7 @@ export default class Sequence {
         this.availableAction = false
         this.canControlBrushing = false
         this.experience.world.character.animation.brushingMixer.stopAllAction()
-        this.confetti()
+        // this.confetti()
         console.log(this.step)
         if (this.step == 8) this.tags.push("Brush Upper Right")
         else if (this.step == 9) this.tags.push("Brush Upper Left")
@@ -1173,7 +1175,6 @@ export default class Sequence {
   refreshGame() {
     window.parent.postMessage(JSON.stringify(this.metricsData), "*")
     console.log("JSON DATA@Success: " + JSON.stringify(this.metricsData))
-
     if (this.gameFailure == 3) {
       alert("Game Over!")
       // this.gameVariation = 1
@@ -1246,7 +1247,7 @@ export default class Sequence {
       attemptCount: 0, //
       tag: "Animation_Game", //
       durartionInSec: this.gameDuration, //
-      score: this.gameScore, //
+      score: this.gameScore * 100, //
       assetDuration: this.gameDuration, //
       successInteractions: this.successInterection, //
       totalInteractions: this.totalInteraction, //
@@ -1254,7 +1255,7 @@ export default class Sequence {
   }
 
   calcMetrics() {
-    console.log("clock")
+    console.log(this.canControlBrushing)
     this.gameDuration++
   }
 }
