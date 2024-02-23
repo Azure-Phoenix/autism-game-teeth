@@ -1172,6 +1172,9 @@ export default class Sequence {
 
   // Refresh Game
   refreshGame() {
+    window.parent.postMessage(JSON.stringify(this.metricsData), "*")
+    console.log("JSON DATA@Success: " + JSON.stringify(this.metricsData))
+    
     if (this.gameFailure == 3) {
       alert("Game Over!")
       // this.gameVariation = 1
@@ -1249,9 +1252,6 @@ export default class Sequence {
       successInteractions: this.successInterection, //
       totalInteractions: this.totalInteraction, //
     }
-
-    window.parent.postMessage(JSON.stringify(this.metricsData), "*")
-    console.log("JSON DATA@Success: " + JSON.stringify(this.metricsData))
   }
 
   calcMetrics() {
