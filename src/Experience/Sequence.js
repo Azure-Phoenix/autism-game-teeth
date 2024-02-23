@@ -1171,11 +1171,14 @@ export default class Sequence {
 
   // Refresh Game
   refreshGame() {
+    window.parent.postMessage(JSON.stringify(this.metricsData), "*")
+    console.log("JSON DATA@Success: " + JSON.stringify(this.metricsData))
+    
     if (this.gameFailure == 3) {
       alert("Game Over!")
       // this.gameVariation = 1
     } else if (this.gameSuccess) {
-      alert("Congratulation! Move to next!")
+      // alert("Congratulation! Move to next!")
       location.reload()
     }
 
@@ -1230,7 +1233,7 @@ export default class Sequence {
       }
     }
 
-    const jsonData = {
+    this.metricsData = {
       iterationType: "ANIMATION_GAME",
       input: {
         event: "Segment Ended",
@@ -1248,9 +1251,6 @@ export default class Sequence {
       successInteractions: this.successInterection, //
       totalInteractions: this.totalInteraction, //
     }
-
-    window.parent.postMessage(JSON.stringify(jsonData), "*")
-    console.log("JSON DATA@Success: " + JSON.stringify(jsonData))
   }
 
   calcMetrics() {
