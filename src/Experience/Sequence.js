@@ -219,8 +219,8 @@ export default class Sequence {
           this.trigger_dragging(this.step)
         }
 
-        if (!this.autoAction.includes(this.step)) {
-          if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
+        if (event.changedTouches[0].clientY == 1) {
+          if (this.brushingAction.includes(this.step)) {
             window.addEventListener("mousemove", this.brush)
             if (this.step == 8)
               this.experience.world.character.animation.actions.brushingURSK.play()
@@ -234,7 +234,7 @@ export default class Sequence {
               this.experience.world.character.animation.actions.brushingFSK.play()
           }
         } else {
-          if (this.brushingAction.includes(this.step)) {
+          if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
             window.addEventListener("mousemove", this.brush)
             if (this.step == 8)
               this.experience.world.character.animation.actions.brushingURSK.play()
@@ -268,7 +268,13 @@ export default class Sequence {
           this.dragProgress.percent = 0
         }
 
-        window.removeEventListener("touchmove", this.brush)
+        if (this.canControlBrushing) {
+          window.removeEventListener("mousemove", this.brush)
+        } else {
+          if (event.changedTouches[0].clientY == 1) {
+            window.removeEventListener("mousemove", this.brush)
+          } else return
+        }
         window.removeEventListener("touchmove", this.dragging)
       })
     })
