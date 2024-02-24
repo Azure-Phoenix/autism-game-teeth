@@ -452,7 +452,7 @@ export default class Sequence {
 
   prompt_action(id) {
     this.promptLimit++
-    if (this.promptLimit == 2) {
+    if (this.promptLimit == 5) {
       // If user doesn't interact correctly during 4 prompts, do action automatically
       this.tempResponseTime = 0
       this.scores[this.scores.length - 1] = 100
