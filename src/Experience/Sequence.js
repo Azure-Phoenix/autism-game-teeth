@@ -270,7 +270,7 @@ export default class Sequence {
         if (this.canControlBrushing) {
           window.removeEventListener("mousemove", this.brush)
         } else {
-          if (event.clientY == 1) {
+          if (event.changedTouches[0].clientY == 1) {
             window.removeEventListener("mousemove", this.brush)
           } else return
         }
@@ -451,7 +451,7 @@ export default class Sequence {
 
   prompt_action(id) {
     this.promptLimit++
-    if (this.promptLimit == 2) {
+    if (this.promptLimit == 5) {
       // If user doesn't interact correctly during 4 prompts, do action automatically
       this.tempResponseTime = 0
       this.scores[this.scores.length - 1] = 100
