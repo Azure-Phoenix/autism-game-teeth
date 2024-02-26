@@ -22,7 +22,7 @@ export default class Sequence {
     this.openingCount = 0 // Toothpaste Cap opening count - 3 times
     this.brushingCount = 0 // Brushing count - 3 times
     this.brushingAction = [8, 9, 11, 12, 14] // Brushing Action Steps
-    this.autoAction = [7, 10, 13, 15, 16, 17, 18, 19, 20, 21, 22] // Auto pass action steps
+    this.autoAction = [7, 10, 13, 15, 16, 17, 19, 20, 21, 22] // Auto pass action steps
     this.draggingAction = [1, 4, 18] // Dragging Action Steps
     this.canControlBrushing = false // Flag for brushing
     this.availableAction = true // Flag for user interaction
@@ -221,7 +221,7 @@ export default class Sequence {
 
         if (event.changedTouches[0].clientY == 1) {
           if (this.brushingAction.includes(this.step)) {
-            window.addEventListener("mousemove", this.brush)
+            window.addEventListener("touchmove", this.brush)
             if (this.step == 8)
               this.experience.world.character.animation.actions.brushingURSK.play()
             if (this.step == 9)
@@ -235,7 +235,7 @@ export default class Sequence {
           }
         } else {
           if (this.brushingAction.includes(this.step) && this.canControlBrushing) {
-            window.addEventListener("mousemove", this.brush)
+            window.addEventListener("touchmove", this.brush)
             if (this.step == 8)
               this.experience.world.character.animation.actions.brushingURSK.play()
             if (this.step == 9)
@@ -269,10 +269,10 @@ export default class Sequence {
         }
 
         if (this.canControlBrushing) {
-          window.removeEventListener("mousemove", this.brush)
+          window.removeEventListener("touchmove", this.brush)
         } else {
           if (event.changedTouches[0].clientY == 1) {
-            window.removeEventListener("mousemove", this.brush)
+            window.removeEventListener("touchmove", this.brush)
           } else return
         }
         window.removeEventListener("touchmove", this.dragging)
