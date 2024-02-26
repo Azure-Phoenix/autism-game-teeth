@@ -45,7 +45,6 @@ export default class Sequence {
     this.finishResponseInterval = false
     this.responses = []
     this.scores = [100]
-    console.log(this.scores)
     this.gameScore = 0
     this.gameDuration = 0
     this.successInterection = 0
@@ -117,7 +116,6 @@ export default class Sequence {
       // Mouse events
       window.addEventListener("mousedown", (event) => {
         this.totalInteraction++
-        console.log(this.scores)
         this.scores[this.scores.length - 1] -= 20
         this.scores[this.scores.length - 1] = Math.max(
           0,
@@ -169,7 +167,6 @@ export default class Sequence {
         }
       })
       window.addEventListener("mouseup", (event) => {
-        // console.log(this.step);
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
@@ -296,7 +293,6 @@ export default class Sequence {
             this.tempResponseTime++
             this.responseTimes[this.step - 1] = this.tempResponseTime
           }
-          console.log(this.responseTimes)
         }, 1000)
       }, 0)
 
@@ -307,7 +303,6 @@ export default class Sequence {
           if (this.isReversing) {
             // If action is reversing action
             this.isReversing = false
-            // console.log("finish reserving");
             this.experience.world.toothbrush.animation.actions.current.paused = true
             this.experience.world.toothpaste.animation.actions.current.paused = true
             this.experience.world.toothpasteLid.animation.actions.current.paused = true
@@ -341,7 +336,6 @@ export default class Sequence {
                   }
                 } else {
                   this.responseTimes.push(0)
-                  console.log(this.responseTimes)
                   this.calcResponseTime = setInterval(() => {
                     if (this.finishResponseInterval == true) {
                       clearInterval(this.calcResponseTime)
@@ -351,7 +345,6 @@ export default class Sequence {
                       this.responseTimes[this.responseTimes.length - 1] =
                         this.tempResponseTime
                     }
-                    console.log(this.responseTimes)
                   }, 1000)
                   this.prompt_action(this.step) // Show Prompt
                 }
@@ -396,23 +389,23 @@ export default class Sequence {
       let actions
       if (id == 9 || id == 12 || id == 14) {
         actions = [
-          { direction: "right", percent: 20 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
+          { direction: "right", percent: 50 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
         ]
       } else {
         actions = [
-          { direction: "left", percent: 20 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
+          { direction: "left", percent: 50 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
         ]
       }
 
@@ -424,7 +417,7 @@ export default class Sequence {
         }
 
         // Number of steps for smoothness
-        let steps = 100
+        let steps = 200
 
         for (let j = 0; j < steps; j++) {
           actionPromise = actionPromise.then(
@@ -460,6 +453,7 @@ export default class Sequence {
       this.finishResponseInterval = true
       if (this.brushingAction.includes(id)) {
         // for automatic brushing actions.
+        this.canControlBrushing = false
         this.auto_brushing(id)
       } else {
         this.play_action(id)
@@ -636,7 +630,6 @@ export default class Sequence {
       mousePos.y >= this.posTo.y &&
       mousePos.y <= this.posTo.y + window.innerWidth / 13
     ) {
-      // console.log("arrived at target");
       this.isDragging = false
       this.step++
       this.confetti()
@@ -685,7 +678,6 @@ export default class Sequence {
         this.availableAction = false
         this.experience.world.cursor.hide()
         this.confetti()
-        console.log(this.step)
         if (this.step == 2) this.tags.push("Open Cap")
         else if (this.step == 5) this.tags.push("Put toothpaste")
         this.tempResponseTime = 0
@@ -1047,7 +1039,6 @@ export default class Sequence {
         this.canControlBrushing = false
         this.experience.world.character.animation.brushingMixer.stopAllAction()
         this.confetti()
-        console.log(this.step)
         if (this.step == 8) this.tags.push("Brush Upper Right")
         else if (this.step == 9) this.tags.push("Brush Upper Left")
         else if (this.step == 11) this.tags.push("Brush Lower Right")
@@ -1180,7 +1171,7 @@ export default class Sequence {
   refreshGame() {
     window.parent.postMessage(JSON.stringify(this.metricsData), "*")
     console.log("JSON DATA@Success: " + JSON.stringify(this.metricsData))
-    
+
     if (this.gameFailure == 3) {
       alert("Game Over!")
       // this.gameVariation = 1
@@ -1261,7 +1252,6 @@ export default class Sequence {
   }
 
   calcMetrics() {
-    console.log(this.canControlBrushing)
     this.gameDuration++
   }
 }
