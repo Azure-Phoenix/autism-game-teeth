@@ -396,23 +396,23 @@ export default class Sequence {
       let actions
       if (id == 9 || id == 12 || id == 14) {
         actions = [
-          { direction: "right", percent: 20 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
+          { direction: "right", percent: 50 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
         ]
       } else {
         actions = [
-          { direction: "left", percent: 20 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
-          { direction: "right", percent: 40 },
-          { direction: "left", percent: 40 },
+          { direction: "left", percent: 50 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
+          { direction: "right", percent: 100 },
+          { direction: "left", percent: 100 },
         ]
       }
 
