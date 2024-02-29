@@ -475,11 +475,18 @@ export default class Sequence {
       )
       this.experience.world.cursor.show()
       this.experience.world.cursor.mesh.lookAt(this.camera.instance.position)
-      this.experience.world.cursor.setScale(
-        this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`].distanceTo(
-          this.camera.instance.position
+      if (this.step == 2)
+        this.experience.world.cursor.setScale(
+          this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`].distanceTo(
+            this.camera.instance.position
+          ) * 1.5
         )
-      )
+      else
+        this.experience.world.cursor.setScale(
+          this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`].distanceTo(
+            this.camera.instance.position
+          )
+        )
       // Audio indicator
       if (id == 1 || id == 4) {
         this.experience.world.instruct.playSound(this.experience.world.instruct.a_pick)
@@ -639,7 +646,7 @@ export default class Sequence {
       // console.log("arrived at target");
       this.isDragging = false
       this.step++
-      if(this.step != 19) this.confetti()
+      if (this.step != 19) this.confetti()
       if (this.step == 2) this.tags.push("Pick Toothpaste")
       else if (this.step == 5) this.tags.push("Pick Toothbrush")
       else if (this.step == 19) this.tags.push("Put Brush")
@@ -1180,7 +1187,7 @@ export default class Sequence {
   refreshGame() {
     window.parent.postMessage(JSON.stringify(this.metricsData), "*")
     console.log("JSON DATA@Success: " + JSON.stringify(this.metricsData))
-    
+
     if (this.gameFailure == 3) {
       alert("Game Over!")
       // this.gameVariation = 1
