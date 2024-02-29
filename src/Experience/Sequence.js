@@ -469,11 +469,18 @@ export default class Sequence {
       )
       this.experience.world.cursor.show()
       this.experience.world.cursor.mesh.lookAt(this.camera.instance.position)
-      this.experience.world.cursor.setScale(
-        this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`].distanceTo(
-          this.camera.instance.position
+      if (this.step == 2)
+        this.experience.world.cursor.setScale(
+          this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`].distanceTo(
+            this.camera.instance.position
+          ) * 1.5
         )
-      )
+      else
+        this.experience.world.cursor.setScale(
+          this.experience.world.hidden.hiddenPos[`Hidden_Action_${id}_from`].distanceTo(
+            this.camera.instance.position
+          )
+        )
       // Audio indicator
       if (id == 1 || id == 4) {
         this.experience.world.instruct.playSound(this.experience.world.instruct.a_pick)
